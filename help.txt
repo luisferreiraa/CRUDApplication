@@ -1,0 +1,37 @@
+Relacionamentos já implementados ✅
+
+Book ↔ Publisher (Muitos-para-Um / Um-para-Muitos)
+Um livro pertence a um único publisher (@ManyToOne).
+Um publisher pode ter vários livros (@OneToMany).
+
+Relacionamentos sugeridos 🚀
+
+Book ↔ Category (Muitos-para-Muitos)
+
+Um livro pode pertencer a várias categorias (@ManyToMany).
+Uma categoria pode ter vários livros (@ManyToMany).
+Book ↔ Review (Um-para-Muitos)
+
+Um livro pode ter várias reviews (@OneToMany).
+Cada review pertence a um único livro (@ManyToOne).
+Book ↔ Author (Muitos-para-Muitos)
+
+Um livro pode ter vários autores (@ManyToMany).
+Um autor pode ter vários livros (@ManyToMany).
+Book ↔ User (Muitos-para-Muitos)
+
+Um livro pode estar emprestado para vários usuários (@ManyToMany).
+Um usuário pode pegar vários livros emprestados (@ManyToMany).
+
+Resumo final dos relacionamentos
+Entidade A	Relacionamento	Entidade B
+Book	@ManyToOne	Publisher
+Publisher	@OneToMany	Book
+Book	@ManyToMany	Category
+Category	@ManyToMany	Book
+Book	@OneToMany	Review
+Review	@ManyToOne	Book
+Book	@ManyToMany	Author
+Author	@ManyToMany	Book
+Book	@ManyToMany	User (Borrowing System)
+User	@ManyToMany	Book (Borrowing System)

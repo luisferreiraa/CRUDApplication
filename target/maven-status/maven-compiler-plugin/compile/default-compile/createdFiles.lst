@@ -1,0 +1,4 @@
+com\example\CRUDApplication\CrudApplication.class
+com\example\CRUDApplication\controller\BookController.class
+com\example\CRUDApplication\repo\BookRepo.class
+com\example\CRUDApplication\model\Book.class
