@@ -1,5 +1,6 @@
 package com.example.CRUDApplication.controller;
 
+import com.example.CRUDApplication.dto.CategoryDTO;
 import com.example.CRUDApplication.model.Category;
 import com.example.CRUDApplication.repo.CategoryRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,19 +32,26 @@ public class CategoryController {
         }
     }
 
-    @PostMapping("/add")        // Endpoint para adicionar um novo category
-    public ResponseEntity<?> addCategory(@RequestBody Category category) {       // Objeto Category enviado no corpo da requisição
+    @PostMapping("/add")
+    public ResponseEntity<?> addCategory(@RequestBody CategoryDTO categoryDTO) {
         try {
-            if (category.getName() == null || category.getName().trim().isEmpty()) {
+            if (categoryDTO.getName() == null || categoryDTO.getName().trim().isEmpty()) {
                 return new ResponseEntity<>("Category name is required", HttpStatus.BAD_REQUEST);
             }
+
+            // Converter DTO para a entidade Category
+            Category category = new Category();
+            category.setName(categoryDTO.getName());
+
+            // Salvar no banco de dados
             Category savedCategory = categoryRepo.save(category);
-            return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);        // Retorna category guardado com 201 (CREATED)
+
+            return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Error saving category", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
+
 
     @GetMapping("/getById/{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
