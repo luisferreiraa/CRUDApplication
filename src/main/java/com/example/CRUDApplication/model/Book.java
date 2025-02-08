@@ -3,6 +3,7 @@ package com.example.CRUDApplication.model;
 // Importa as anotações do Jakarta Persistance API (JPA) e Lombok
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -41,6 +42,7 @@ public class Book {
     private List<Category> categories;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference       // Evita o loop infinito na serialização
     private List<Review> reviews;
 
     @ManyToMany

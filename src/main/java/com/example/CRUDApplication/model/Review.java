@@ -1,5 +1,6 @@
 package com.example.CRUDApplication.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,6 +28,7 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = false)
+    @JsonBackReference      // Evita o loop infinito na serialização
     private Book book;
 
     // Getters e Setters
