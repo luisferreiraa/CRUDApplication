@@ -19,14 +19,11 @@ import java.util.List;
 public class Book {
 
     @Id     // Define o campo 'id' como chave primária
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column                 // Define a coluna 'title' na base de dados
     private String title;
-
-    @Column                 // Define a coluna 'author' na base de dados
-    private String author;
 
     @ManyToOne(fetch = FetchType.EAGER)      // Um Book pertence a um único Publisher
     @JoinColumn(name = "publisher_id", nullable = false)        // Define a chave estrangeira na tabela books
@@ -39,6 +36,7 @@ public class Book {
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
+    @JsonManagedReference
     private List<Category> categories;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -51,6 +49,7 @@ public class Book {
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "author_id")
     )
+    @JsonManagedReference
     private List<Author> authors;
 
     // Métodos getter e setter explicitamente declarados (opcional, pois o Lombok já os gera)
@@ -68,14 +67,6 @@ public class Book {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
     }
 
     public List<Review> getReviews() {

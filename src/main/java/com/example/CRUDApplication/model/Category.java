@@ -1,5 +1,6 @@
 package com.example.CRUDApplication.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,7 @@ public class Category {
     private String name;
 
     @ManyToMany(mappedBy = "categories")    // Relacionamento bidirecional
+    @JsonBackReference
     private List<Book> books;
 
     // Getters e Setters

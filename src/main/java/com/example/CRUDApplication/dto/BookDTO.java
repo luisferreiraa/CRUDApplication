@@ -11,7 +11,7 @@ public class BookDTO {
     public BookDTO(Book book) {
         this.id = book.getId();
         this.title = book.getTitle();
-        this.author = book.getAuthor();
+        this.author = book.getAuthors().toString();
         this.publisher = new PublisherDTO(book.getPublisher());
     }
 

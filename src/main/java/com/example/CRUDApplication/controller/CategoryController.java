@@ -31,6 +31,20 @@ public class CategoryController {
         }
     }
 
+    @PostMapping("/add")        // Endpoint para adicionar um novo category
+    public ResponseEntity<?> addCategory(@RequestBody Category category) {       // Objeto Category enviado no corpo da requisição
+        try {
+            if (category.getName() == null || category.getName().trim().isEmpty()) {
+                return new ResponseEntity<>("Category name is required", HttpStatus.BAD_REQUEST);
+            }
+            Category savedCategory = categoryRepo.save(category);
+            return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);        // Retorna category guardado com 201 (CREATED)
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error saving category", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
     @GetMapping("/getById/{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
         try {
@@ -67,18 +81,4 @@ public class CategoryController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @PostMapping("/add")
-    public ResponseEntity<?> addCategory(@RequestBody Category category) {
-        try {
-            Category savedCategory = categoryRepo.save(category);
-            return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao adicionar categoria: " + e.getMessage());
-
-        }
-    }
-
-
 }

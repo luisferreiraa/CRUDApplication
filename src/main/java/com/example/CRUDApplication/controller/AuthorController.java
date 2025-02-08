@@ -3,6 +3,7 @@ package com.example.CRUDApplication.controller;
 import com.example.CRUDApplication.dto.AuthorDTO;
 import com.example.CRUDApplication.model.Author;
 import com.example.CRUDApplication.model.Book;
+import com.example.CRUDApplication.model.Publisher;
 import com.example.CRUDApplication.repo.AuthorRepo;
 import com.example.CRUDApplication.repo.BookRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,15 +51,18 @@ public class AuthorController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addAuthor(@RequestBody Author author) {
+    @PostMapping("/add")        // Endpoint para adicionar um novo autor
+    public ResponseEntity<?> addAuthor(@RequestBody Author author) {       // Objeto Author enviado no corpo da requisição
         try {
+            if (author.getName() == null || author.getName().trim().isEmpty()) {
+                return new ResponseEntity<>("Author name is required", HttpStatus.BAD_REQUEST);
+            }
             Author savedAuthor = authorRepo.save(author);
-            return new ResponseEntity<>(savedAuthor, HttpStatus.CREATED);
+            return new ResponseEntity<>(savedAuthor, HttpStatus.CREATED);        // Retorna Author guardado com 201 (CREATED)
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao adicionar autor: " + e.getMessage());
+            return new ResponseEntity<>("Error saving author", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
     }
 
     @PutMapping("/updateById/{id}")

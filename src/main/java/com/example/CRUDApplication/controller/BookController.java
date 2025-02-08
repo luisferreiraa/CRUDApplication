@@ -135,7 +135,7 @@ public class BookController {
         if (oldBookData.isPresent()) {      // Verifica se o livro foi encontrado
             Book updatedBook = oldBookData.get();       // Obtém o livro existente
             updatedBook.setTitle(newBookData.getTitle());       // Atualiza o título
-            updatedBook.setAuthor(newBookData.getAuthor());     // Atualiza o autor
+            updatedBook.setAuthors(newBookData.getAuthors());     // Atualiza o autor
 
             // Verifica se um novo publisher foi enviado na requisição
             if (newBookData.getPublisher() != null && newBookData.getPublisher().getId() != null) {
