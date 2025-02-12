@@ -1,13 +1,20 @@
 package com.example.CRUDApplication.controller;
 
+import com.example.CRUDApplication.dto.CategoryRequest;
+import com.example.CRUDApplication.dto.UserDTO;
+import com.example.CRUDApplication.dto.UserRequest;
+import com.example.CRUDApplication.model.Category;
 import com.example.CRUDApplication.model.User;
 import com.example.CRUDApplication.repo.UserRepo;
+import com.example.CRUDApplication.service.UserService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -17,65 +24,73 @@ public class UserController {
     @Autowired
     private UserRepo userRepo;
 
-    @GetMapping("/getAll")
-    public ResponseEntity<List<User>> getAllUsers() {
-        try {
-            List<User> userList = userRepo.findAll();
+    @Autowired
+    private UserService userService;
 
-            if (userList.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(userList, HttpStatus.OK);
-        } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    @GetMapping("/getAll")
+    public ResponseEntity<?> getAllUsers() {
+        try {
+            List<User> userList = userService.getAllUsers();
+            return ResponseEntity.ok(userList);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No users found");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving publishers");
         }
     }
 
-    @GetMapping("/getById")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    @GetMapping("/getById/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
         try {
-            Optional<User> user = userRepo.findById(id);
+            UserDTO user = userService.getUserById(id)
+                    .orElseThrow(() -> new NoSuchElementException("No user found with this ID"));
 
-            return user.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-
+            return ResponseEntity.ok(user);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No user found with this ID");
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving user");
         }
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addUser(@RequestBody User user) {
+    public ResponseEntity<?> addUser(@RequestBody UserRequest user) {
         try {
-            User savedUser = userRepo.save(user);
+            User savedUser = userService.addUser(user);
             return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User username is required");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao adicionar categoria: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating user");
         }
     }
 
     @PutMapping("/updateById/{id}")
-    public ResponseEntity<User> updateUserById(@PathVariable Long id, @RequestBody User newUserData) {
-        Optional<User> oldUserData = userRepo.findById(id);
-
-        if (oldUserData.isPresent()) {
-            User updatedUser = oldUserData.get();
-            updatedUser.setUsername(newUserData.getUsername());
-
-            User savedUser = userRepo.save(updatedUser);
-            return new ResponseEntity<>(savedUser, HttpStatus.OK);
+    public ResponseEntity<?> updateUserUserName(@PathVariable Long id, @RequestBody UserRequest updateData) {
+        try {
+            User updatedUser = userService.updateUserUsername(id, updateData);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating user");
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/deleteById/{id}")
-    public ResponseEntity<HttpStatus> deleteUserById(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
         try {
-            userRepo.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.OK);
+            boolean deletedUser = userService.deleteUserById(id);
+
+            if (deletedUser) {
+                return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting user");
         }
     }
 }

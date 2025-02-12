@@ -1,14 +1,23 @@
 package com.example.CRUDApplication.controller;
 
+import com.example.CRUDApplication.dto.PublisherDTO;
+import com.example.CRUDApplication.dto.PublisherRequest;
 import com.example.CRUDApplication.model.Publisher;
 import com.example.CRUDApplication.repo.PublisherRepo;
+import com.example.CRUDApplication.service.PublisherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+
+// Trata requisições HTTP (recebe e responde)
+// Converte dados da requisição para o formato adequado
+// Chama os serviços para processar a lógica de negócio
+// Retorna as respostas HTTP apropriadas
 
 @RestController     // Define a classe como controlador REST
 @RequestMapping("/api/publishers")      // Define a rota base para os endpoints deste controlador
@@ -17,60 +26,74 @@ public class PublisherController {
     @Autowired      // Injeta automaticamente a dependência do repositório
     private PublisherRepo publisherRepo;
 
-    @GetMapping("/getAll")      // Endpoint para obter todos os publishers
-    public ResponseEntity<List<Publisher>> getAllPublishers() {
-        List<Publisher> publishers = publisherRepo.findAll();       // Busca todos os publishers na base de dados
-        if (publishers.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);     // Retorna 204 se não encontrar publishers
-        }
-        return new ResponseEntity<>(publishers, HttpStatus.OK);     // Retorna lista de publishers com 200 (OK)
-    }
+    @Autowired
+    private PublisherService publisherService;
 
-    @PostMapping("/add")        // Endpoint para adicionar um novo publisher
-    public ResponseEntity<?> addPublisher(@RequestBody Publisher publisher) {       // Objeto Publisher enviado no corpo da requisição
+    @GetMapping("/getAll")
+    public ResponseEntity<?> getAllPublishers() {
         try {
-            if (publisher.getName() == null || publisher.getName().trim().isEmpty()) {
-                return new ResponseEntity<>("Publisher name is required", HttpStatus.BAD_REQUEST);
-            }
-            Publisher savedPublisher = publisherRepo.save(publisher);
-            return new ResponseEntity<>(savedPublisher, HttpStatus.CREATED);        // Retorna Publisher guardado com 201 (CREATED)
+            List<Publisher> publisherList = publisherService.getAllPublishers();
+            return ResponseEntity.ok(publisherList);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No publishers found");
         } catch (Exception e) {
-            return new ResponseEntity<>("Error saving publisher", HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving publishers");
         }
-
     }
 
-    @GetMapping("/getById/{id}")     // Endpoint para obter um publisher pelo ID
-    public ResponseEntity<?> getPublisherById(@PathVariable Long id) {      // ID do publisher a ser procurado enviadp no corpo da requisição
-        if (id == null || id <= 0) {
-            return new ResponseEntity<>("Invalid ID", HttpStatus.BAD_REQUEST);
+    @GetMapping("/getById/{id}")
+    public ResponseEntity<?> getPublisherById(@PathVariable Long id) {
+        try {
+            PublisherDTO publisher = publisherService.getPublisherById(id)
+                    .orElseThrow(() -> new NoSuchElementException("No publisher found with this ID"));
+
+            return ResponseEntity.ok(publisher);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No publisher found with this ID");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving publisher");
         }
-        Optional<Publisher> publisher = publisherRepo.findById(id);
-        return publisher.map(value -> new ResponseEntity<>(value, HttpStatus.OK))       // Retorna Publisher correspoondente ao ID
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));       // Retorna 404 se não for encontrado
     }
 
-    @PutMapping("/updateById/{id}")     // Define um endpoint PUT para atualizar um Publisher pelo ID
-    public ResponseEntity<?> updatePublisherById(@PathVariable Long id, @RequestBody Publisher newPublisherData) {
-        Optional<Publisher> oldPublisherData = publisherRepo.findById(id);      // Busca o Publisher na base de dados
-
-        if (oldPublisherData.isPresent()) {     // Verifica se o Publisher foi encontrado
-            Publisher updatedPublisher = oldPublisherData.get();        // Obtém o Publisher existente
-            updatedPublisher.setName(newPublisherData.getName());       // Atualiza o nome
-
-            Publisher savedPublisher = publisherRepo.save(updatedPublisher);        // Guarda as alterações na base de dados
-            return new ResponseEntity<>(savedPublisher, HttpStatus.OK);     // Retorna 200 (OK)
+    @PostMapping("/add")
+    public ResponseEntity<?> addPublisher(@RequestBody PublisherRequest publisher) {
+        try {
+            Publisher savedPublisher = publisherService.addPublisher(publisher);
+            return new ResponseEntity<>(savedPublisher, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Publisher name is required");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating publisher");
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);      // Retorna 400 se o Publisher não for encontrado
+    }
+
+    @PutMapping("/updateById/{id}")
+    public ResponseEntity<?> updatePublisherById(@PathVariable Long id, @RequestBody PublisherRequest updateData) {
+        try {
+            Publisher updatedPublisher = publisherService.updatePublisherName(id, updateData);
+            return new ResponseEntity<>(updatedPublisher, HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Publisher not found");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid name");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updting publisher");
+        }
+
     }
 
     @DeleteMapping("/deleteById/{id}")      // Define um endpoint DELETE para remover um publisher pelo ID
-    public ResponseEntity<HttpStatus> deletePublisherById(@PathVariable Long id) {
+    public ResponseEntity<?> deletePublisherById(@PathVariable Long id) {
         try {
-            publisherRepo.deleteById(id);       // Remove o publisher pelo ID
-            return new ResponseEntity<>(HttpStatus.OK);     // Retorna 200 (OK) se a exclusão for bem-sucedida
+            boolean deletedPublisher = publisherService.deletePublisherById(id);
+
+            if (deletedPublisher) {
+                return ResponseEntity.status(HttpStatus.OK).body("Publisher deleted successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Publisher not found");
+            }
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);      // Retorna 500 em caso de erro
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting publisher");
         }
     }
 }
