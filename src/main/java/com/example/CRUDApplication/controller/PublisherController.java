@@ -35,7 +35,7 @@ public class PublisherController {
             List<Publisher> publisherList = publisherService.getAllPublishers();
             return ResponseEntity.ok(publisherList);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No publishers found");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving publishers");
         }
@@ -49,7 +49,7 @@ public class PublisherController {
 
             return ResponseEntity.ok(publisher);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No publisher found with this ID");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving publisher");
         }
@@ -61,7 +61,7 @@ public class PublisherController {
             Publisher savedPublisher = publisherService.addPublisher(publisher);
             return new ResponseEntity<>(savedPublisher, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Publisher name is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating publisher");
         }
@@ -73,9 +73,9 @@ public class PublisherController {
             Publisher updatedPublisher = publisherService.updatePublisherName(id, updateData);
             return new ResponseEntity<>(updatedPublisher, HttpStatus.OK);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Publisher not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid name");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updting publisher");
         }

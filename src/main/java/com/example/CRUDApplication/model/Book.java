@@ -26,8 +26,9 @@ public class Book {
     private String title;
 
     @ManyToOne(fetch = FetchType.EAGER)      // Um Book pertence a um único Publisher
-    @JoinColumn(name = "publisher_id", nullable = false)        // Define a chave estrangeira na tabela books
-    @JsonBackReference      // Evita o loop infinito ao serializar JSON
+    @JoinColumn(name = "publisher_id")        // Define a chave estrangeira na tabela books
+//    @JsonBackReference
+    @JsonManagedReference
     private Publisher publisher;
 
     @ManyToMany

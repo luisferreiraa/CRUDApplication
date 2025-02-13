@@ -5,7 +5,6 @@ import com.example.CRUDApplication.dto.CategoryRequest;
 import com.example.CRUDApplication.model.Category;
 import com.example.CRUDApplication.repo.CategoryRepo;
 import com.example.CRUDApplication.service.CategoryService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 // Trata requisições HTTP (recebe e responde)
 // Converte dados da requisição para o formato adequado
@@ -36,7 +34,7 @@ public class CategoryController {
             List<Category> categoryList = categoryService.getAllCategories();
             return ResponseEntity.ok(categoryList);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No categories found");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving categories");
         }
@@ -50,7 +48,7 @@ public class CategoryController {
 
             return ResponseEntity.ok(category);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No category found with this ID");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving category");
         }
@@ -62,7 +60,7 @@ public class CategoryController {
             Category savedCategory = categoryService.addCategory(category);
             return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Category name is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating category");
         }
@@ -74,9 +72,9 @@ public class CategoryController {
             Category updatedCategory = categoryService.updateCategoryName(id, updateData);
             return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid name");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating category");
         }

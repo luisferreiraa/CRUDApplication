@@ -17,9 +17,4 @@ public interface AuthorService {
     Author updateAuthorName(Long id, AuthorRequest updateData);
 
     boolean deleteAuthorById(Long id);
-
-    Author addBookToAuthor(Long authorId, Long bookId);
-
-    boolean removeBookFromAuthor(Long authorId, Long bookId);
-
 }

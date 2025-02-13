@@ -95,45 +95,6 @@ public class AuthorServiceImpl implements AuthorService {
             authorRepo.deleteById(id);
             return true;        // Retorna true indicando que a remoção foi bem-sucedida
         }
-        return false;        // Retorna false se o autor não foi encontado
-    }
-
-    @Override
-    public Author addBookToAuthor(Long authorId, Long bookId) {
-        // Busca o autor pelo ID
-        Author authorData = authorRepo.findById(authorId)
-                .orElseThrow(() -> new NoSuchElementException("Author not found with ID: " + authorId));
-
-        // Busca o livro pelo ID
-        Book bookData = bookRepo.findById(bookId)
-                .orElseThrow(() -> new NoSuchElementException("Book not found with ID: " + bookId));
-
-        // Verifica se o livro já está na lista do author
-        if (authorData.getBooks().contains(bookData)) {
-            throw new IllegalArgumentException("Book is already associated with this author");
-        }
-
-        // Adiciona o livro à lista do autor e guarda na base de dados
-        authorData.getBooks().add(bookData);
-        return authorRepo.save(authorData);
-    }
-
-    @Override
-    public boolean removeBookFromAuthor(Long authorId, Long bookId) {
-        // Busca o autor pelo ID
-        Author authorData = authorRepo.findById(authorId)
-                .orElseThrow(() -> new NoSuchElementException("Author not found with ID: " + authorId));
-
-        // Busca o livro pelo ID
-        Book bookData = bookRepo.findById(bookId)
-                .orElseThrow(() -> new NoSuchElementException("Book not found with ID: " + bookId));
-
-        // Verifica se o livro já está na lista do author
-        if (!authorData.getBooks().contains(bookData)) {
-            throw new IllegalArgumentException("Book is not associated with this author");
-        }
-
-        // Adiciona o livro à lista do autor e guarda na base de dados
-        return authorData.getBooks().remove(bookData);
+        throw new NoSuchElementException("Author not found");       // Lança excepção se autor não foi encontado
     }
 }

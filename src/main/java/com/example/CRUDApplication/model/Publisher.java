@@ -1,5 +1,6 @@
 package com.example.CRUDApplication.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,7 +28,8 @@ public class Publisher {
     // orphanRemoval = True -> Se um livro deixar de ter Publisher, será removido da BD
     // fetch = FetchType.LAZY -> O JPA não carrega automaticamente as coleções @OneToMany
     @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference       // Evita recursão infinita
+//    @JsonManagedReference
+    @JsonBackReference
     private List<Book> books;
 
     public Long getId() {

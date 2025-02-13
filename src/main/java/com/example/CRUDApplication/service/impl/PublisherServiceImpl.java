@@ -71,7 +71,7 @@ public class PublisherServiceImpl implements PublisherService {
             throw new IllegalArgumentException("Name is required");
         }
 
-        // Busca a categoria pelo ID e lança uma excepção se não for encontrado
+        // Busca o publisher pelo ID e lança uma excepção se não for encontrado
         Publisher publisherDB = publisherRepo.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Publisher not found"));
 

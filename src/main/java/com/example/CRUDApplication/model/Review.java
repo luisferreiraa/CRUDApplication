@@ -1,5 +1,6 @@
 package com.example.CRUDApplication.model;
 
+import com.example.CRUDApplication.dto.ReviewDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,6 +31,13 @@ public class Review {
     @JoinColumn(name = "book_id", nullable = false)
     @JsonBackReference      // Evita o loop infinito na serialização
     private Book book;
+
+    // Construtor que aceita ReviewDTO
+    public Review(ReviewDTO dto) {
+        this.comment = dto.getComment();
+        this.reviewerName = dto.getReviewerName();
+        this.rating = dto.getRating();
+    }
 
     // Getters e Setters
 

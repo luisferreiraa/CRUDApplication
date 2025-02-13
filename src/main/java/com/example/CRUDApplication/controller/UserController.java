@@ -33,7 +33,7 @@ public class UserController {
             List<User> userList = userService.getAllUsers();
             return ResponseEntity.ok(userList);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No users found");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving publishers");
         }
@@ -47,7 +47,7 @@ public class UserController {
 
             return ResponseEntity.ok(user);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No user found with this ID");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving user");
         }
@@ -59,7 +59,7 @@ public class UserController {
             User savedUser = userService.addUser(user);
             return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User username is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating user");
         }
@@ -71,9 +71,9 @@ public class UserController {
             User updatedUser = userService.updateUserUsername(id, updateData);
             return new ResponseEntity<>(updatedUser, HttpStatus.OK);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating user");
         }
