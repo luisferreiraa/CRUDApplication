@@ -32,13 +32,6 @@ public class Review {
     @JsonBackReference      // Evita o loop infinito na serialização
     private Book book;
 
-    // Construtor que aceita ReviewDTO
-    public Review(ReviewDTO dto) {
-        this.comment = dto.getComment();
-        this.reviewerName = dto.getReviewerName();
-        this.rating = dto.getRating();
-    }
-
     // Getters e Setters
 
     public Long getId() {

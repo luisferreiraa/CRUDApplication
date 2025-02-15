@@ -93,4 +93,30 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting user");
         }
     }
+
+    @PutMapping("{userId}/addBorrowedBook/{bookId}")
+    public ResponseEntity<?> addBorrowedBookToUser(@PathVariable Long userId, @PathVariable Long bookId) {
+        try {
+            User updatedUser = userService.addBorrowedBookToUser(userId, bookId);
+            return ResponseEntity.ok(updatedUser);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding borrowed book");
+        }
+    }
+
+    @PutMapping("{userId}/removeBorrowedBook/{bookId}")
+    public ResponseEntity<?> removeBorrowedBookFromUser(@PathVariable Long userId, @PathVariable Long bookId) {
+        try {
+            User updatedUser = userService.removeBorrowedBookFromUser(userId, bookId);
+            return ResponseEntity.ok(updatedUser);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding borrowed book");
+        }
+    }
+
+
 }

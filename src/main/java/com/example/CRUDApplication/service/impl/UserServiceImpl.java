@@ -7,9 +7,12 @@ package com.example.CRUDApplication.service.impl;
 
 import com.example.CRUDApplication.dto.UserDTO;
 import com.example.CRUDApplication.dto.UserRequest;
+import com.example.CRUDApplication.model.Book;
 import com.example.CRUDApplication.model.User;
+import com.example.CRUDApplication.repo.BookRepo;
 import com.example.CRUDApplication.repo.UserRepo;
 import com.example.CRUDApplication.service.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private BookRepo bookRepo;
 
     @Override
     public List<User> getAllUsers() {
@@ -92,6 +98,49 @@ public class UserServiceImpl implements UserService {
         throw new NoSuchElementException("User not found");
     }
 
+    @Override
+    @Transactional
+    public User addBorrowedBookToUser(Long userId, Long bookId) {
+        User userDB = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Book bookDB = bookRepo.findById(bookId)
+                .orElseThrow(() -> new RuntimeException("Book not found"));
+
+        // Verifica se o livro já está na lista
+        if (userDB.getBorrowedBooks().contains(bookDB)) {
+            throw new RuntimeException("This book is already borrowed by the user");
+        }
+
+        // Verifica se ainda existem cópias disponíveis
+        if (bookDB.getAvailableCopies() <= 0) {
+            throw new RuntimeException("No copies available for this book");
+        }
+
+        // Adiciona o livro à lista de livros emprestados pelo utilizador
+        userDB.getBorrowedBooks().add(bookDB);
+
+        return userRepo.save(userDB);
+    }
+
+    @Override
+    @Transactional
+    public User removeBorrowedBookFromUser(Long userId, Long bookId) {
+        User userDB = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Book bookDB = bookRepo.findById(bookId)
+                .orElseThrow(() -> new RuntimeException("Book not found"));
+
+        // Verifica se o livro não está na lista
+        if (!userDB.getBorrowedBooks().contains(bookDB)) {
+            throw new RuntimeException("This book is not borrowed by the user");
+        }
+
+        userDB.getBorrowedBooks().remove(bookDB);
+
+        return userRepo.save(userDB);
+    }
 
 
 }

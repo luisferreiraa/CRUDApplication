@@ -9,12 +9,19 @@ public class ReviewDTO {
     private Integer rating;
     private BookDTO book;
 
+    // Construtor vazio necessário para serialização
+    public ReviewDTO() {
+
+    }
+
     public ReviewDTO(Review review) {
-        this.id = review.getId();
-        this.reviewerName = review.getReviewerName();
-        this.comment = review.getComment();
-        this.rating = review.getRating();
-        this.book = new BookDTO(review.getBook());
+        if (review != null) {
+            this.id = review.getId();
+            this.reviewerName = review.getReviewerName();
+            this.comment = review.getComment();
+            this.rating = review.getRating();
+            this.book = (review.getBook() != null) ? new BookDTO(review.getBook()) : null;
+        }
     }
 
     // Getters e Setters

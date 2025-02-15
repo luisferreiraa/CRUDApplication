@@ -13,4 +13,8 @@ public interface UserService {
     User addUser(UserRequest user);
     User updateUserUsername(Long id, UserRequest updateData);
     boolean deleteUserById(Long id);
+    User addBorrowedBookToUser(Long userId, Long bookId);
+
+    User removeBorrowedBookFromUser(Long userId, Long bookId);
+
 }

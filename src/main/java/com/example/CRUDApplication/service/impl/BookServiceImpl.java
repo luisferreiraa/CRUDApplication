@@ -189,7 +189,10 @@ public class BookServiceImpl implements BookService {
         }
 
         // Cria a review a partir do DTO
-        Review review = new Review(reviewDTO);
+        Review review = new Review();
+        review.setComment(reviewDTO.getComment());
+        review.setRating(reviewDTO.getRating());
+        review.setReviewerName(reviewDTO.getReviewerName());
         review.setBook(book);   // Define a relação entre review e book
 
         // Adciona a review ao livro

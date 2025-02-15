@@ -2,6 +2,7 @@ package com.example.CRUDApplication.model;
 
 // Importa as anotações do Jakarta Persistance API (JPA) e Lombok
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -53,6 +54,20 @@ public class Book {
     @JsonManagedReference
     private List<Author> authors;
 
+    @Column
+    private Integer copies;     // Total de cópias disponíveis no sistema
+
+    @ManyToMany(mappedBy = "borrowedBooks")
+    @JsonBackReference
+    private List<User> borrowedBy;
+
+    // Campo calculado (não será guardado na base de dados)
+    @Transient
+    @JsonIgnore     // Evita serialização infinita
+    public Integer getAvailableCopies() {
+        return copies - (borrowedBy != null ? borrowedBy.size() : 0);
+    }
+
     // Métodos getter e setter explicitamente declarados (opcional, pois o Lombok já os gera)
     public Long getId() {
         return id;
@@ -80,6 +95,14 @@ public class Book {
 
     public List<Author> getAuthors() {
         return authors;
+    }
+
+    public Integer getCopies() {
+        return copies;
+    }
+
+    public void setCopies(Integer copies) {
+        this.copies = copies;
     }
 
     public void setAuthors(List<Author> authors) {
