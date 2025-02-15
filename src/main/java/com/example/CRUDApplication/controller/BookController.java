@@ -78,6 +78,20 @@ public class BookController {
       }
     }
 
+    @PutMapping("/updateCopiesById/{bookId}/{copies}")
+    public ResponseEntity<?> updateCopiesById(@PathVariable Long bookId, @PathVariable Integer copies) {
+        try {
+            Book updatedBook = bookService.updateBookCopies(bookId, copies);
+            return new ResponseEntity<>(updatedBook, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     @DeleteMapping("/deleteById/{id}")      // Define um endpoint DELETE para remover um livro pelo ID
     public ResponseEntity<?> deleteBookById(@PathVariable Long id) {
         try {
@@ -153,10 +167,10 @@ public class BookController {
         }
     }
 
-    @PostMapping("/{bookId}/addReview")
-    public ResponseEntity<?> addReviewToBook(@PathVariable Long bookId, @RequestBody ReviewDTO review) {
+    @PostMapping("/{bookId}/addReview/{userId}")
+    public ResponseEntity<?> addReviewToBook(@PathVariable Long bookId, @PathVariable Long userId, @RequestBody ReviewDTO review) {
         try {
-            Book updatedBook = bookService.addReviewToBook(bookId, review);
+            Book updatedBook = bookService.addReviewToBook(bookId, userId, review);
             return ResponseEntity.ok(updatedBook);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

@@ -38,6 +38,9 @@ public class BookServiceImpl implements BookService {
     @Autowired
     private ReviewRepo reviewRepo;
 
+    @Autowired
+    private UserRepo userRepo;
+
     @Override
     public List<Book> getAllBooks() {
         // Busca todos os livros da base de dados
@@ -95,6 +98,23 @@ public class BookServiceImpl implements BookService {
         bookDB.setTitle(updateData.getTitle());
 
         // Salva e retorna o book atualizado
+        return bookRepo.save(bookDB);
+    }
+
+    @Override
+    public Book updateBookCopies(Long bookId, Integer copies) {
+        // Valida se o número de cópias foi fornecido
+        if (copies == null) {
+            throw new IllegalArgumentException("Number of copies is required");
+        }
+
+        // Busca o book pelo ID e lança uma excepção se não for encontrado
+        Book bookDB = bookRepo.findById(bookId)
+                .orElseThrow(() -> new NoSuchElementException("Book not found"));
+
+        // Atuaçiza o número de exemplares
+        bookDB.setCopies(copies);
+
         return bookRepo.save(bookDB);
     }
 
@@ -179,9 +199,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book addReviewToBook(Long bookId, ReviewDTO reviewDTO) {
+    public Book addReviewToBook(Long bookId, Long userId, ReviewDTO reviewDTO) {
         Book book = bookRepo.findById(bookId)
                 .orElseThrow(() -> new NoSuchElementException("Book not found"));
+
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
 
         // Verificar se a lista de reviews está nula e inicializá-la se necessário
         if (book.getReviews() == null) {
@@ -192,8 +215,9 @@ public class BookServiceImpl implements BookService {
         Review review = new Review();
         review.setComment(reviewDTO.getComment());
         review.setRating(reviewDTO.getRating());
-        review.setReviewerName(reviewDTO.getReviewerName());
-        review.setBook(book);   // Define a relação entre review e book
+//        review.setReviewerName(reviewDTO.getReviewerName());
+        review.setUser(user);
+        review.setBook(book);
 
         // Adciona a review ao livro
         book.getReviews().add(review);

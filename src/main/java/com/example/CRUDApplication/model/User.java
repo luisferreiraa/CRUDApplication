@@ -1,5 +1,6 @@
 package com.example.CRUDApplication.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,12 +22,15 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
+    // todo acrescentar email
+
     @ManyToMany
     @JoinTable(
             name = "borrowed_books",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "book_id")
     )
+    @JsonIgnore
     private List<Book> borrowedBooks;
 
     // Getters e Setters

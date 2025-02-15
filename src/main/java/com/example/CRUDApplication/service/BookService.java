@@ -14,12 +14,13 @@ public interface BookService {
     Optional<BookDTO> getBookById(Long id);
     Book addBook(BookRequest book);
     Book updateBookTitle(Long id, BookRequest updateBook);
+    Book updateBookCopies(Long bookId, Integer copies);
     boolean deleteBookById(Long id);
     Book addAuthorToBook(Long bookId, Long authorId);
     Book removeAuthorFromBook(Long bookId, Long authorId);
     Book addCategoryToBook(Long bookId, Long categoryId);
     Book removeCategoryFromBook(Long bookId, Long categoryId);
     Book addPublisherToBook(Long bookId, Long publisherId);
-    Book addReviewToBook(Long bookId, ReviewDTO review);
+    Book addReviewToBook(Long bookId, Long userId, ReviewDTO review);
     Book removeReviewFromBook(Long bookId, Long reviewId);
 }

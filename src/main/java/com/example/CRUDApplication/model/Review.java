@@ -18,8 +18,8 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String reviewerName;
+//    @Column(nullable = false)
+//    private String reviewerName;
 
     @Column(nullable = false)
     private String comment;
@@ -32,6 +32,10 @@ public class Review {
     @JsonBackReference      // Evita o loop infinito na serialização
     private Book book;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     // Getters e Setters
 
     public Long getId() {
@@ -42,12 +46,21 @@ public class Review {
         this.id = id;
     }
 
-    public String getReviewerName() {
-        return reviewerName;
+//    public String getReviewerName() {
+//        return reviewerName;
+//    }
+//
+//    public void setReviewerName(String reviewerName) {
+//        this.reviewerName = reviewerName;
+//    }
+
+
+    public User getUser() {
+        return user;
     }
 
-    public void setReviewerName(String reviewerName) {
-        this.reviewerName = reviewerName;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getComment() {
