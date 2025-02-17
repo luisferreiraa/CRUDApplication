@@ -95,15 +95,9 @@ public class UserController {
     }
 
     @PutMapping("{userId}/addBorrowedBook/{bookId}")
-    public ResponseEntity<?> addBorrowedBookToUser(@PathVariable Long userId, @PathVariable Long bookId) {
-        try {
-            User updatedUser = userService.addBorrowedBookToUser(userId, bookId);
-            return ResponseEntity.ok(updatedUser);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding borrowed book");
-        }
+    public ResponseEntity<User> addBorrowedBookToUser(@PathVariable Long userId, @PathVariable Long bookId) {
+        User updatedUser = userService.addBorrowedBookToUser(userId, bookId);
+        return ResponseEntity.ok(updatedUser);
     }
 
     @PutMapping("{userId}/removeBorrowedBook/{bookId}")

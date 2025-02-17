@@ -3,16 +3,18 @@ package com.example.CRUDApplication.controller;
 import com.example.CRUDApplication.dto.BookDTO;
 import com.example.CRUDApplication.dto.BookRequest;
 import com.example.CRUDApplication.dto.ReviewDTO;
+import com.example.CRUDApplication.exception.BookNotFoundException;
 import com.example.CRUDApplication.model.Book;
-import com.example.CRUDApplication.model.Review;
+import com.example.CRUDApplication.response.ErrorResponse;
+
 import com.example.CRUDApplication.repo.BookRepo;
 import com.example.CRUDApplication.service.BookService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController                 // Define esta classe como um controlador REST
@@ -25,26 +27,18 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    @GetMapping("/getAll")
-    public ResponseEntity<?> getAllBooks() {
-        try {
-            List<Book> bookList = bookService.getAllBooks();
-            return ResponseEntity.ok(bookList);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving books");
-        }
+    @GetMapping("/get-all")
+    public ResponseEntity<List<Book>> getAllBooks() {
+        List<Book> bookList = bookService.getAllBooks();
+        return ResponseEntity.ok(bookList);
     }
 
     @GetMapping("/getById/{id}")
     public ResponseEntity<?> getBookById(@PathVariable Long id) {
         try {
-            BookDTO book = bookService.getBookById(id)
-                    .orElseThrow(() -> new NoSuchElementException("No book found with this ID"));
-
+            Optional<BookDTO> book = bookService.getBookById(id);
             return ResponseEntity.ok(book);
-        } catch (NoSuchElementException e) {
+        } catch (BookNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving book");
@@ -190,4 +184,11 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error removing review from book");
         }
     }
+
+//    @ExceptionHandler(BookNotFoundException.class)
+//    public ResponseEntity<?> handleBookNotFoundException(BookNotFoundException exception) {
+//        ErrorResponse booksNotFound = new ErrorResponse(
+//                LocalDateTime.now(), exception.getMessage(), "Book List is empty");
+//        return new ResponseEntity<>(booksNotFound, HttpStatus.NOT_FOUND);
+//    }
 }

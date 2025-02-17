@@ -7,6 +7,7 @@ package com.example.CRUDApplication.service.impl;
 
 import com.example.CRUDApplication.dto.UserDTO;
 import com.example.CRUDApplication.dto.UserRequest;
+import com.example.CRUDApplication.exception.BookNotFoundException;
 import com.example.CRUDApplication.model.Book;
 import com.example.CRUDApplication.model.User;
 import com.example.CRUDApplication.repo.BookRepo;
@@ -105,7 +106,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Book bookDB = bookRepo.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+                .orElseThrow(() -> new BookNotFoundException("Book not found with ID: " + bookId));
 
         // Verifica se o livro já está na lista
         if (userDB.getBorrowedBooks().contains(bookDB)) {

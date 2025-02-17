@@ -3,6 +3,7 @@ package com.example.CRUDApplication.service.impl;
 import com.example.CRUDApplication.dto.BookDTO;
 import com.example.CRUDApplication.dto.BookRequest;
 import com.example.CRUDApplication.dto.ReviewDTO;
+import com.example.CRUDApplication.exception.BookNotFoundException;
 import com.example.CRUDApplication.model.*;
 import com.example.CRUDApplication.repo.*;
 import com.example.CRUDApplication.service.BookService;
@@ -48,7 +49,7 @@ public class BookServiceImpl implements BookService {
 
         // Se não encontrar books, lança excepção
         if (bookList.isEmpty()) {
-            throw new NoSuchElementException("No books found");
+            throw new BookNotFoundException("No books found");
         }
         // Se encontrar, devolve a lista de livros
         return bookList;
@@ -61,7 +62,7 @@ public class BookServiceImpl implements BookService {
 
         // Se o book não existir, lança uma excepção
         if (bookDB.isEmpty()) {
-            throw new NoSuchElementException("No book found");
+            throw new BookNotFoundException("No book found with ID: " + id);
         }
 
         // Converte o Book em BookDTO e retorna
