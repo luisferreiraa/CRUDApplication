@@ -11,10 +11,32 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(BookNotFoundException.class)
-    public ResponseEntity<?> handleBookNotFoundException(BookNotFoundException exception) {
+    @ExceptionHandler(ObjectNotFoundException.class)
+    public ResponseEntity<?> handleBookNotFoundException(ObjectNotFoundException exception) {
         ErrorResponse booksNotFound = new ErrorResponse(
-                LocalDateTime.now(), exception.getMessage(), "Book List is empty");
+                LocalDateTime.now(),
+                exception.getMessage(),
+                "No object found in database ");
         return new ResponseEntity<>(booksNotFound, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(RequestDataMissingException.class)
+    public ResponseEntity<?> handleRequestDataMissingException(RequestDataMissingException exception) {
+        ErrorResponse dataMissing = new ErrorResponse(
+                LocalDateTime.now(),
+                exception.getMessage(),
+                "Required request data is missing"
+        );
+        return new ResponseEntity<>(dataMissing, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGenericExpression(Exception exception) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                "Internal server error",
+                exception.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

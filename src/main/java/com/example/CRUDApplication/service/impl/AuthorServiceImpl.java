@@ -2,8 +2,9 @@ package com.example.CRUDApplication.service.impl;
 
 import com.example.CRUDApplication.dto.AuthorDTO;
 import com.example.CRUDApplication.dto.AuthorRequest;
+import com.example.CRUDApplication.exception.ObjectNotFoundException;
+import com.example.CRUDApplication.exception.RequestDataMissingException;
 import com.example.CRUDApplication.model.Author;
-import com.example.CRUDApplication.model.Book;
 import com.example.CRUDApplication.repo.AuthorRepo;
 import com.example.CRUDApplication.repo.BookRepo;
 import com.example.CRUDApplication.service.AuthorService;
@@ -35,7 +36,7 @@ public class AuthorServiceImpl implements AuthorService {
 
         // Se não encontrar autores, lança uma excepção
         if (authorsList.isEmpty()) {
-            throw new NoSuchElementException("No authors found");
+            throw new ObjectNotFoundException("No authors available in the system");
         }
         // Se encontrar, devolve a lista de autores
         return authorsList;
@@ -48,7 +49,7 @@ public class AuthorServiceImpl implements AuthorService {
 
         // Se o autor não existir, lança excepção
         if (authorDB.isEmpty()) {
-            throw new NoSuchElementException("No author found");
+            throw new ObjectNotFoundException("No author found with ID: " + id);
         }
 
         // Converte Author em AuthorDTO e retorna
@@ -59,7 +60,7 @@ public class AuthorServiceImpl implements AuthorService {
     public Author addAuthor(AuthorRequest authorDTO) {
         // Valida se o nome do autor foi fornecido
         if (authorDTO.getName() == null || authorDTO.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Author name is required");
+            throw new RequestDataMissingException("Author name is required");
         }
 
         // Cria uma nova entidade a partir do DTO recebido
@@ -74,12 +75,12 @@ public class AuthorServiceImpl implements AuthorService {
     public Author updateAuthorName(Long id, AuthorRequest updateData) {
         // Valida se o nome do autor foi fornecido
         if (updateData.getName() == null || updateData.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Name is required");
+            throw new RequestDataMissingException("Author name is required");
         }
 
         // Busca o autor pelo ID e lança excepção se não for encontrado
         Author author = authorRepo.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Author not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Author not found with ID: " + id));
 
         // Atualiza o nome do autor
         author.setName(updateData.getName());
@@ -95,6 +96,6 @@ public class AuthorServiceImpl implements AuthorService {
             authorRepo.deleteById(id);
             return true;        // Retorna true indicando que a remoção foi bem-sucedida
         }
-        throw new NoSuchElementException("Author not found");       // Lança excepção se autor não foi encontado
+        throw new ObjectNotFoundException("Author not found with ID: " + id);       // Lança excepção se autor não foi encontado
     }
 }

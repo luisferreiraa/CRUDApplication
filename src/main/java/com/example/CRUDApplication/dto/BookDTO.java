@@ -6,13 +6,15 @@ public class BookDTO {
     private Long id;
     private String title;
     private String author;
-    private PublisherDTO publisher;
+//    private PublisherDTO publisher;
+    private String publisherName;
 
     public BookDTO(Book book) {
         this.id = book.getId();
         this.title = book.getTitle();
         this.author = book.getAuthors().toString();
-        this.publisher = new PublisherDTO(book.getPublisher());
+//        this.publisher = new PublisherDTO(book.getPublisher());
+        this.publisherName = book.getPublisher().getName();
     }
 
     // Getters e setters
@@ -40,11 +42,11 @@ public class BookDTO {
         this.author = author;
     }
 
-    public PublisherDTO getPublisher() {
-        return publisher;
+    public String getPublisher() {
+        return publisherName;
     }
 
     public void setPublisher(PublisherDTO publisher) {
-        this.publisher = publisher;
+        this.publisherName = publisher.getName();
     }
 }

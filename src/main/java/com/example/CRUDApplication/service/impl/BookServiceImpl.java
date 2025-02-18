@@ -3,7 +3,8 @@ package com.example.CRUDApplication.service.impl;
 import com.example.CRUDApplication.dto.BookDTO;
 import com.example.CRUDApplication.dto.BookRequest;
 import com.example.CRUDApplication.dto.ReviewDTO;
-import com.example.CRUDApplication.exception.BookNotFoundException;
+import com.example.CRUDApplication.exception.ObjectNotFoundException;
+import com.example.CRUDApplication.exception.RequestDataMissingException;
 import com.example.CRUDApplication.model.*;
 import com.example.CRUDApplication.repo.*;
 import com.example.CRUDApplication.service.BookService;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 // Contém a lógica de negócio
@@ -49,7 +49,7 @@ public class BookServiceImpl implements BookService {
 
         // Se não encontrar books, lança excepção
         if (bookList.isEmpty()) {
-            throw new BookNotFoundException("No books found");
+            throw new ObjectNotFoundException("No books available in the system");
         }
         // Se encontrar, devolve a lista de livros
         return bookList;
@@ -62,7 +62,7 @@ public class BookServiceImpl implements BookService {
 
         // Se o book não existir, lança uma excepção
         if (bookDB.isEmpty()) {
-            throw new BookNotFoundException("No book found with ID: " + id);
+            throw new ObjectNotFoundException("No book found with ID: " + id);
         }
 
         // Converte o Book em BookDTO e retorna
@@ -73,7 +73,7 @@ public class BookServiceImpl implements BookService {
     public Book addBook(BookRequest newBook) {
         // Valida se o título do livro foi fornecido
         if (newBook.getTitle() == null || newBook.getTitle().trim().isEmpty()) {
-            throw new IllegalArgumentException("Book title is required");
+            throw new RequestDataMissingException("Book title is required");
         }
 
         // Cria uma nova entidade a partir do DTO recebido
@@ -88,12 +88,12 @@ public class BookServiceImpl implements BookService {
     public Book updateBookTitle(Long id, BookRequest updateData) {
         // Valida se o título do book foi fornecido
         if (updateData.getTitle() == null || updateData.getTitle().trim().isEmpty()) {
-            throw new IllegalArgumentException("Title is required");
+            throw new RequestDataMissingException("Book title is required");
         }
 
         // Busca o book pelo ID e lança uma excepção se não for encontrado
         Book bookDB = bookRepo.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Book not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Book not found with ID: " + id));
 
         // Atualiza o título do book
         bookDB.setTitle(updateData.getTitle());
@@ -106,12 +106,12 @@ public class BookServiceImpl implements BookService {
     public Book updateBookCopies(Long bookId, Integer copies) {
         // Valida se o número de cópias foi fornecido
         if (copies == null) {
-            throw new IllegalArgumentException("Number of copies is required");
+            throw new RequestDataMissingException("Number of copies is required");
         }
 
         // Busca o book pelo ID e lança uma excepção se não for encontrado
         Book bookDB = bookRepo.findById(bookId)
-                .orElseThrow(() -> new NoSuchElementException("Book not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Book not found with ID: " + bookId));
 
         // Atuaçiza o número de exemplares
         bookDB.setCopies(copies);
@@ -126,17 +126,17 @@ public class BookServiceImpl implements BookService {
             bookRepo.deleteById(id);
             return true;
         }
-        throw new NoSuchElementException("Book not found");
+        throw new ObjectNotFoundException("Book not found with ID: " + id);
     }
 
     @Override
     @Transactional
     public Book addAuthorToBook(Long bookId, Long authorId) {
         Book book = bookRepo.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Book not found with ID: " + bookId));
 
         Author author = authorRepo.findById(authorId)
-                .orElseThrow(() -> new RuntimeException("Author not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Author not found with ID: " + authorId));
 
         book.getAuthors().add(author);
 
@@ -147,10 +147,10 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public Book removeAuthorFromBook(Long bookId, Long authorId) {
         Book book = bookRepo.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Book not found with ID: " + bookId));
 
         Author author = authorRepo.findById(authorId)
-                .orElseThrow(() -> new RuntimeException("Author not found"));
+                .orElseThrow(() -> new RuntimeException("Author not found with ID: " + authorId));
 
         book.getAuthors().remove(author);
 
@@ -161,10 +161,10 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public Book addCategoryToBook(Long bookId, Long categoryId) {
         Book book = bookRepo.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Book not found with ID: " + bookId));
 
         Category category = categoryRepo.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new RuntimeException("Category not found with ID: " + categoryId));
 
         book.getCategories().add(category);
 
@@ -175,10 +175,10 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public Book removeCategoryFromBook(Long bookId, Long categoryId) {
         Book book = bookRepo.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Book not found with ID: " + bookId));
 
         Category category = categoryRepo.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Category not found with ID: " + categoryId));
 
         book.getCategories().remove(category);
 
@@ -189,10 +189,10 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public Book addPublisherToBook(Long bookId, Long publisherId) {
         Book book = bookRepo.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Book not found with ID: " + bookId));
 
         Publisher publisher = publisherRepo.findById(publisherId)
-                .orElseThrow(() -> new RuntimeException("Publisher not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Publisher not found with ID: " + publisherId));
 
         book.setPublisher(publisher);
 
@@ -202,10 +202,10 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book addReviewToBook(Long bookId, Long userId, ReviewDTO reviewDTO) {
         Book book = bookRepo.findById(bookId)
-                .orElseThrow(() -> new NoSuchElementException("Book not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Book not found with ID: " + bookId));
 
         User user = userRepo.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("User not found with ID: " + userId));
 
         // Verificar se a lista de reviews está nula e inicializá-la se necessário
         if (book.getReviews() == null) {
@@ -232,13 +232,13 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book removeReviewFromBook(Long bookId, Long reviewId) {
         Book book = bookRepo.findById(bookId)
-                .orElseThrow(() -> new NoSuchElementException("Book not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Book not found with ID: " + bookId));
 
         Review review = reviewRepo.findById(reviewId)
-                .orElseThrow(() -> new NoSuchElementException("Review not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Review not found with ID: " + reviewId));
 
         if (!book.getReviews().contains(review)) {
-            throw new NoSuchElementException("Review does not belong to this book");
+            throw new ObjectNotFoundException("Review does not belong to this book");
         }
 
         book.getReviews().remove(review);

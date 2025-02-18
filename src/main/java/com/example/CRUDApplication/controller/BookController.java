@@ -3,9 +3,7 @@ package com.example.CRUDApplication.controller;
 import com.example.CRUDApplication.dto.BookDTO;
 import com.example.CRUDApplication.dto.BookRequest;
 import com.example.CRUDApplication.dto.ReviewDTO;
-import com.example.CRUDApplication.exception.BookNotFoundException;
 import com.example.CRUDApplication.model.Book;
-import com.example.CRUDApplication.response.ErrorResponse;
 
 import com.example.CRUDApplication.repo.BookRepo;
 import com.example.CRUDApplication.service.BookService;
@@ -14,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController                 // Define esta classe como um controlador REST
@@ -27,162 +24,82 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    @GetMapping("/get-all")
+    @GetMapping("/")
     public ResponseEntity<List<Book>> getAllBooks() {
         List<Book> bookList = bookService.getAllBooks();
         return ResponseEntity.ok(bookList);
     }
 
-    @GetMapping("/getById/{id}")
-    public ResponseEntity<?> getBookById(@PathVariable Long id) {
-        try {
-            Optional<BookDTO> book = bookService.getBookById(id);
-            return ResponseEntity.ok(book);
-        } catch (BookNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving book");
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<BookDTO>> getBookById(@PathVariable Long id) {
+        Optional<BookDTO> book = bookService.getBookById(id);
+        return ResponseEntity.ok(book);
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addBook(@RequestBody BookRequest book) {
-        try {
-            Book savedBook = bookService.addBook(book);
-            return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating book");
-        }
+    @PostMapping("/")
+    public ResponseEntity<Book> addBook(@RequestBody BookRequest book) {
+        Book savedBook = bookService.addBook(book);
+        return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
     }
 
-
-    @PutMapping("/updateById/{id}")
-    public ResponseEntity<?> updateBookById(@PathVariable Long id, @RequestBody BookRequest updateData) {
-      try {
-          Book updatedBook = bookService.updateBookTitle(id, updateData);
-          return new ResponseEntity<>(updatedBook, HttpStatus.OK);
-      } catch (NoSuchElementException e) {
-          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-      } catch (IllegalArgumentException e) {
-          return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-      } catch (Exception e) {
-          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating book");
-      }
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBookById(@PathVariable Long id, @RequestBody BookRequest updateData) {
+        Book updatedBook = bookService.updateBookTitle(id, updateData);
+        return new ResponseEntity<>(updatedBook, HttpStatus.OK);
     }
 
-    @PutMapping("/updateCopiesById/{bookId}/{copies}")
-    public ResponseEntity<?> updateCopiesById(@PathVariable Long bookId, @PathVariable Integer copies) {
-        try {
-            Book updatedBook = bookService.updateBookCopies(bookId, copies);
-            return new ResponseEntity<>(updatedBook, HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+    @PutMapping("/{bookId}/{copies}")
+    public ResponseEntity<Book> updateCopiesById(@PathVariable Long bookId, @PathVariable Integer copies) {
+        Book updatedBook = bookService.updateBookCopies(bookId, copies);
+        return new ResponseEntity<>(updatedBook, HttpStatus.OK);
     }
 
-    @DeleteMapping("/deleteById/{id}")      // Define um endpoint DELETE para remover um livro pelo ID
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteBookById(@PathVariable Long id) {
-        try {
-            boolean deletedBook = bookService.deleteBookById(id);
-
-            if (deletedBook) {
-                return ResponseEntity.status(HttpStatus.OK).body("Book deleted successfully");
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting book");
-        }
+        boolean deletedBook = bookService.deleteBookById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/{bookId}/addAuthor/{authorId}")
-    public ResponseEntity<?> addAuthorToBook(@PathVariable Long bookId, @PathVariable Long authorId) {
-        try {
-            Book updatedBook = bookService.addAuthorToBook(bookId, authorId);
-            return ResponseEntity.ok(updatedBook);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding author to book");
-        }
+    @PutMapping("/{bookId}/authors/{authorId}")
+    public ResponseEntity<Book> addAuthorToBook(@PathVariable Long bookId, @PathVariable Long authorId) {
+        Book updatedBook = bookService.addAuthorToBook(bookId, authorId);
+        return ResponseEntity.ok(updatedBook);
     }
 
-    @PutMapping("/{bookId}/removeAuthor/{authorId}")
-    public ResponseEntity<?> removeAuthorFromBook(@PathVariable Long bookId, @PathVariable Long authorId) {
-        try {
-            Book updatedBook = bookService.removeAuthorFromBook(bookId, authorId);
-            return ResponseEntity.ok(updatedBook);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error removing author from book");
-        }
+    @DeleteMapping("/{bookId}/authors/{authorId}")
+    public ResponseEntity<Book> removeAuthorFromBook(@PathVariable Long bookId, @PathVariable Long authorId) {
+        Book updatedBook = bookService.removeAuthorFromBook(bookId, authorId);
+        return ResponseEntity.ok(updatedBook);
     }
 
-    @PutMapping("/{bookId}/addCategory/{categoryId}")
-    public ResponseEntity<?> addCategoryToBook(@PathVariable Long bookId, @PathVariable Long categoryId) {
-        try {
-            Book updatedBook = bookService.addCategoryToBook(bookId, categoryId);
-            return ResponseEntity.ok(updatedBook);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding category to book");
-        }
+    @PutMapping("/{bookId}/categories/{categoryId}")
+    public ResponseEntity<Book> addCategoryToBook(@PathVariable Long bookId, @PathVariable Long categoryId) {
+        Book updatedBook = bookService.addCategoryToBook(bookId, categoryId);
+        return ResponseEntity.ok(updatedBook);
     }
 
-    @PutMapping("/{bookId}/removeCategory/{categoryId}")
-    public ResponseEntity<?> removeCategoryFromBook(@PathVariable Long bookId, @PathVariable Long categoryId) {
-        try {
-            Book updatedBook = bookService.removeCategoryFromBook(bookId, categoryId);
-            return ResponseEntity.ok(updatedBook);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error removing category from book");
-        }
+    @DeleteMapping("/{bookId}/categories/{categoryId}")
+    public ResponseEntity<Book> removeCategoryFromBook(@PathVariable Long bookId, @PathVariable Long categoryId) {
+        Book updatedBook = bookService.removeCategoryFromBook(bookId, categoryId);
+        return ResponseEntity.ok(updatedBook);
     }
 
-    @PutMapping("/{bookId}/addPublisher/{publisherId}")
-    public ResponseEntity<?> addPublisherToBook(@PathVariable Long bookId, @PathVariable Long publisherId) {
-        try {
-            Book updatedBook = bookService.addPublisherToBook(bookId, publisherId);
-            return ResponseEntity.ok(updatedBook);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding publisher to book");
-        }
+    @PutMapping("/{bookId}/publishers/{publisherId}")
+    public ResponseEntity<Book> addPublisherToBook(@PathVariable Long bookId, @PathVariable Long publisherId) {
+        Book updatedBook = bookService.addPublisherToBook(bookId, publisherId);
+        return ResponseEntity.ok(updatedBook);
     }
 
-    @PostMapping("/{bookId}/addReview/{userId}")
-    public ResponseEntity<?> addReviewToBook(@PathVariable Long bookId, @PathVariable Long userId, @RequestBody ReviewDTO review) {
-        try {
-            Book updatedBook = bookService.addReviewToBook(bookId, userId, review);
-            return ResponseEntity.ok(updatedBook);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding review to book");
-        }
+    @PutMapping("/{bookId}/reviews/{userId}")
+    public ResponseEntity<Book> addReviewToBook(@PathVariable Long bookId, @PathVariable Long userId, @RequestBody ReviewDTO review) {
+        Book updatedBook = bookService.addReviewToBook(bookId, userId, review);
+        return ResponseEntity.ok(updatedBook);
     }
 
-    @DeleteMapping("/{bookId}/removeReview/{reviewId}")
-    public ResponseEntity<?> removeReviewFromBook(@PathVariable Long bookId, @PathVariable Long reviewId) {
-        try {
-            Book updatedBook = bookService.removeReviewFromBook(bookId, reviewId);
-            return ResponseEntity.ok(updatedBook);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error removing review from book");
-        }
+    @DeleteMapping("/{bookId}/reviews/{reviewId}")
+    public ResponseEntity<Book> removeReviewFromBook(@PathVariable Long bookId, @PathVariable Long reviewId) {
+        Book updatedBook = bookService.removeReviewFromBook(bookId, reviewId);
+        return ResponseEntity.ok(updatedBook);
     }
 
 //    @ExceptionHandler(BookNotFoundException.class)
