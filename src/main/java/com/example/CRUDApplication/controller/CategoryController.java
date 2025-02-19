@@ -1,6 +1,6 @@
 package com.example.CRUDApplication.controller;
 
-import com.example.CRUDApplication.dto.CategoryDTO;
+import com.example.CRUDApplication.dto.CategoryWithBooksDTO;
 import com.example.CRUDApplication.dto.CategoryRequest;
 import com.example.CRUDApplication.model.Category;
 import com.example.CRUDApplication.repo.CategoryRepo;
@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 // Trata requisições HTTP (recebe e responde)
@@ -30,14 +29,14 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping("/")
-    public ResponseEntity<List<Category>> getAllCategories() {
-        List<Category> categoryList = categoryService.getAllCategories();
+    public ResponseEntity<List<CategoryWithBooksDTO>> getAllCategories() {
+        List<CategoryWithBooksDTO> categoryList = categoryService.getAllCategories();
         return ResponseEntity.ok(categoryList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<CategoryDTO>> getCategoryById(@PathVariable Long id) {
-        Optional<CategoryDTO> category = categoryService.getCategoryById(id);
+    public ResponseEntity<Optional<CategoryWithBooksDTO>> getCategoryById(@PathVariable Long id) {
+        Optional<CategoryWithBooksDTO> category = categoryService.getCategoryById(id);
         return ResponseEntity.ok(category);
     }
 

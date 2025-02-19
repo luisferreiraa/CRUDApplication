@@ -1,6 +1,6 @@
 package com.example.CRUDApplication.service.impl;
 
-import com.example.CRUDApplication.dto.CategoryDTO;
+import com.example.CRUDApplication.dto.CategoryWithBooksDTO;
 import com.example.CRUDApplication.dto.CategoryRequest;
 import com.example.CRUDApplication.exception.ObjectNotFoundException;
 import com.example.CRUDApplication.exception.RequestDataMissingException;
@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 // Contém a lógica de negócio
 // Faz validações relacionadas às regras do domínio
@@ -26,7 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepo categoryRepo;
 
     @Override
-    public List<Category> getAllCategories() {
+    public List<CategoryWithBooksDTO> getAllCategories() {
         // Busca todas as categorias da base de dados
         List<Category> categoryList = categoryRepo.findAll();
 
@@ -36,11 +36,13 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         // Se encontrar, devolve a lista de categorias
-        return categoryList;
+        return categoryList.stream()
+                .map(CategoryWithBooksDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<CategoryDTO> getCategoryById(Long id) {
+    public Optional<CategoryWithBooksDTO> getCategoryById(Long id) {
         // Busca uma categoria pelo ID
         Optional<Category> categoryDB = categoryRepo.findById(id);
 
@@ -50,7 +52,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         // Converte Category em CategoryDTO e retorna
-        return categoryDB.map(CategoryDTO::new);
+        return categoryDB.map(CategoryWithBooksDTO::new);
     }
 
     @Override

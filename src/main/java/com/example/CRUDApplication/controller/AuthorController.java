@@ -1,7 +1,7 @@
 package com.example.CRUDApplication.controller;
 
-import com.example.CRUDApplication.dto.AuthorRequest;
-import com.example.CRUDApplication.dto.AuthorDTO;
+import com.example.CRUDApplication.dto.AuthorCreateRequest;
+import com.example.CRUDApplication.dto.AuthorWithBooksDTO;
 import com.example.CRUDApplication.model.Author;
 import com.example.CRUDApplication.repo.AuthorRepo;
 import com.example.CRUDApplication.repo.BookRepo;
@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -29,25 +28,25 @@ public class AuthorController {
     private AuthorService authorService;
 
     @GetMapping("/")
-    public ResponseEntity<List<Author>> getAllAuthors() {
-        List<Author> authorList = authorService.getAllAuthors();
+    public ResponseEntity<List<AuthorWithBooksDTO>> getAllAuthors() {
+        List<AuthorWithBooksDTO> authorList = authorService.getAllAuthors();
         return ResponseEntity.ok(authorList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<AuthorDTO>> getAuthorById(@PathVariable Long id) {
-        Optional<AuthorDTO> author = authorService.getAuthorById(id);
+    public ResponseEntity<Optional<AuthorWithBooksDTO>> getAuthorById(@PathVariable Long id) {
+        Optional<AuthorWithBooksDTO> author = authorService.getAuthorById(id);
         return ResponseEntity.ok(author);
     }
 
     @PostMapping("/")
-    public ResponseEntity<Author> addAuthor(@RequestBody AuthorRequest author) {
+    public ResponseEntity<Author> addAuthor(@RequestBody AuthorCreateRequest author) {
         Author savedAuthor = authorService.addAuthor(author);
         return new ResponseEntity<>(savedAuthor, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Author> updateAuthorName(@PathVariable Long id, @RequestBody AuthorRequest updateData) {
+    public ResponseEntity<Author> updateAuthorName(@PathVariable Long id, @RequestBody AuthorCreateRequest updateData) {
         Author updatedAuthor = authorService.updateAuthorName(id, updateData);
         return ResponseEntity.ok(updatedAuthor);
     }

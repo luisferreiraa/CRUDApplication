@@ -1,7 +1,7 @@
 package com.example.CRUDApplication.service.impl;
 
-import com.example.CRUDApplication.dto.AuthorDTO;
-import com.example.CRUDApplication.dto.AuthorRequest;
+import com.example.CRUDApplication.dto.AuthorWithBooksDTO;
+import com.example.CRUDApplication.dto.AuthorCreateRequest;
 import com.example.CRUDApplication.exception.ObjectNotFoundException;
 import com.example.CRUDApplication.exception.RequestDataMissingException;
 import com.example.CRUDApplication.model.Author;
@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 // Contém a lógica de negócio
 // Faz validações relacionadas às regras do domínio
@@ -30,7 +30,7 @@ public class AuthorServiceImpl implements AuthorService {
     private BookRepo bookRepo;
 
     @Override
-    public List<Author> getAllAuthors() {
+    public List<AuthorWithBooksDTO> getAllAuthors() {
         // Busca todos os autores da base de dados
         List<Author> authorsList = authorRepo.findAll();
 
@@ -39,40 +39,37 @@ public class AuthorServiceImpl implements AuthorService {
             throw new ObjectNotFoundException("No authors available in the system");
         }
         // Se encontrar, devolve a lista de autores
-        return authorsList;
+        return authorsList.stream()
+                .map(AuthorWithBooksDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<AuthorDTO> getAuthorById(Long id) {
-        // Busca um autor pelo ID
-        Optional<Author> authorDB = authorRepo.findById(id);
-
-        // Se o autor não existir, lança excepção
-        if (authorDB.isEmpty()) {
-            throw new ObjectNotFoundException("No author found with ID: " + id);
-        }
-
-        // Converte Author em AuthorDTO e retorna
-        return authorDB.map(AuthorDTO::new);
+    public Optional<AuthorWithBooksDTO> getAuthorById(Long id) {
+        return authorRepo.findById(id)
+                .map(AuthorWithBooksDTO::new)
+                .or(() -> {
+                    throw new ObjectNotFoundException("No author found with ID: " + id);
+                });
     }
 
     @Override
-    public Author addAuthor(AuthorRequest authorDTO) {
+    public Author addAuthor(AuthorCreateRequest authorRequest) {
         // Valida se o nome do autor foi fornecido
-        if (authorDTO.getName() == null || authorDTO.getName().trim().isEmpty()) {
+        if (authorRequest.getName() == null || authorRequest.getName().trim().isEmpty()) {
             throw new RequestDataMissingException("Author name is required");
         }
 
         // Cria uma nova entidade a partir do DTO recebido
         Author author = new Author();
-        author.setName(authorDTO.getName());
+        author.setName(authorRequest.getName());
 
         // Salva o autor na base de dados e retorna a entidade persistida
         return authorRepo.save(author);
     }
 
     @Override
-    public Author updateAuthorName(Long id, AuthorRequest updateData) {
+    public Author updateAuthorName(Long id, AuthorCreateRequest updateData) {
         // Valida se o nome do autor foi fornecido
         if (updateData.getName() == null || updateData.getName().trim().isEmpty()) {
             throw new RequestDataMissingException("Author name is required");

@@ -1,20 +1,20 @@
 package com.example.CRUDApplication.service;
 
-import com.example.CRUDApplication.dto.AuthorDTO;
-import com.example.CRUDApplication.dto.AuthorRequest;
+import com.example.CRUDApplication.dto.AuthorWithBooksDTO;
+import com.example.CRUDApplication.dto.AuthorCreateRequest;
 import com.example.CRUDApplication.model.Author;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface AuthorService {
-    List<Author> getAllAuthors();
+    List<AuthorWithBooksDTO> getAllAuthors();
 
-    Optional<AuthorDTO> getAuthorById(Long id);
+    Optional<AuthorWithBooksDTO> getAuthorById(Long id);
 
-    Author addAuthor(AuthorRequest author);
+    Author addAuthor(AuthorCreateRequest author);
 
-    Author updateAuthorName(Long id, AuthorRequest updateData);
+    Author updateAuthorName(Long id, AuthorCreateRequest updateData);
 
     boolean deleteAuthorById(Long id);
 }
