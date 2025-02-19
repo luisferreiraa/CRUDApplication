@@ -8,6 +8,9 @@ package com.example.CRUDApplication.service.impl;
 import com.example.CRUDApplication.dto.UserDTO;
 import com.example.CRUDApplication.dto.UserRequest;
 import com.example.CRUDApplication.exception.ObjectNotFoundException;
+import com.example.CRUDApplication.exception.RecordAlreadyExistsException;
+import com.example.CRUDApplication.exception.RequestDataMissingException;
+import com.example.CRUDApplication.exception.ResourceNotAvailableException;
 import com.example.CRUDApplication.model.Book;
 import com.example.CRUDApplication.model.User;
 import com.example.CRUDApplication.repo.BookRepo;
@@ -50,7 +53,7 @@ public class UserServiceImpl implements UserService {
 
         // Se o user não existir, lança uma excepção
         if (userDB.isEmpty()) {
-            throw new NoSuchElementException("No user found");
+            throw new ObjectNotFoundException("No user found with ID: " + id);
         }
         // Converte User em UserDTO e retorna
         return userDB.map(UserDTO::new);
@@ -60,7 +63,7 @@ public class UserServiceImpl implements UserService {
     public User addUser(UserRequest newUser) {
         // Valida se o username do user foi fornecido
         if (newUser.getUsername() == null || newUser.getUsername().trim().isEmpty()) {
-            throw new IllegalArgumentException("User username is required");
+            throw new RequestDataMissingException("User username is required");
         }
 
         // Cria uma nova entidade a partir do DTO fornecido
@@ -75,12 +78,12 @@ public class UserServiceImpl implements UserService {
     public User updateUserUsername(Long id, UserRequest updateData) {
         // Valida se o username foi fornecido
         if (updateData.getUsername() == null || updateData.getUsername().trim().isEmpty()) {
-            throw new IllegalArgumentException("Username is required");
+            throw new RequestDataMissingException("User username is required");
         }
 
         // Busca o user pelo ID e lança uma excepção se não for encontrado
         User userDB = userRepo.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("User not found with ID: " + id));
 
         // Atualiza o username do user
         userDB.setUsername(updateData.getUsername());
@@ -96,26 +99,26 @@ public class UserServiceImpl implements UserService {
             userRepo.deleteById(id);
             return true;
         }
-        throw new NoSuchElementException("User not found");
+        throw new ObjectNotFoundException("User not found with ID: " + id);
     }
 
     @Override
     @Transactional
     public User addBorrowedBookToUser(Long userId, Long bookId) {
         User userDB = userRepo.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("User not found with ID: " + userId));
 
         Book bookDB = bookRepo.findById(bookId)
                 .orElseThrow(() -> new ObjectNotFoundException("Book not found with ID: " + bookId));
 
         // Verifica se o livro já está na lista
         if (userDB.getBorrowedBooks().contains(bookDB)) {
-            throw new RuntimeException("This book is already borrowed by the user");
+            throw new RecordAlreadyExistsException("Book with ID " + bookId + " is already borrowed by the user with ID: " + userId);
         }
 
         // Verifica se ainda existem cópias disponíveis
         if (bookDB.getAvailableCopies() <= 0) {
-            throw new RuntimeException("No copies available for this book");
+            throw new ResourceNotAvailableException("No copies available for book with ID: " + bookId);
         }
 
         // Adiciona o livro à lista de livros emprestados pelo utilizador
@@ -128,14 +131,14 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User removeBorrowedBookFromUser(Long userId, Long bookId) {
         User userDB = userRepo.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("User not found with ID: " + userId));
 
         Book bookDB = bookRepo.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Book not found with ID: " + bookId));
 
         // Verifica se o livro não está na lista
         if (!userDB.getBorrowedBooks().contains(bookDB)) {
-            throw new RuntimeException("This book is not borrowed by the user");
+            throw new ObjectNotFoundException("Book with ID: " + bookId + " is not borrowed by the user with ID: " + userId);
         }
 
         userDB.getBorrowedBooks().remove(bookDB);

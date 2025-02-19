@@ -29,71 +29,33 @@ public class PublisherController {
     @Autowired
     private PublisherService publisherService;
 
-    @GetMapping("/getAll")
-    public ResponseEntity<?> getAllPublishers() {
-        try {
-            List<Publisher> publisherList = publisherService.getAllPublishers();
-            return ResponseEntity.ok(publisherList);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving publishers");
-        }
+    @GetMapping("/")
+    public ResponseEntity<List<Publisher>> getAllPublishers() {
+        List<Publisher> publisherList = publisherService.getAllPublishers();
+        return ResponseEntity.ok(publisherList);
     }
 
-    @GetMapping("/getById/{id}")
-    public ResponseEntity<?> getPublisherById(@PathVariable Long id) {
-        try {
-            PublisherDTO publisher = publisherService.getPublisherById(id)
-                    .orElseThrow(() -> new NoSuchElementException("No publisher found with this ID"));
-
-            return ResponseEntity.ok(publisher);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving publisher");
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<PublisherDTO>> getPublisherById(@PathVariable Long id) {
+        Optional<PublisherDTO> publisher = publisherService.getPublisherById(id);
+        return ResponseEntity.ok(publisher);
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addPublisher(@RequestBody PublisherRequest publisher) {
-        try {
-            Publisher savedPublisher = publisherService.addPublisher(publisher);
-            return new ResponseEntity<>(savedPublisher, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating publisher");
-        }
+    @PostMapping("/")
+    public ResponseEntity<Publisher> addPublisher(@RequestBody PublisherRequest publisher) {
+        Publisher savedPublisher = publisherService.addPublisher(publisher);
+        return new ResponseEntity<>(savedPublisher, HttpStatus.CREATED);
     }
 
-    @PutMapping("/updateById/{id}")
-    public ResponseEntity<?> updatePublisherById(@PathVariable Long id, @RequestBody PublisherRequest updateData) {
-        try {
+    @PutMapping("/{id}")
+    public ResponseEntity<Publisher> updatePublisherById(@PathVariable Long id, @RequestBody PublisherRequest updateData) {
             Publisher updatedPublisher = publisherService.updatePublisherName(id, updateData);
             return new ResponseEntity<>(updatedPublisher, HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updting publisher");
-        }
-
     }
 
-    @DeleteMapping("/deleteById/{id}")      // Define um endpoint DELETE para remover um publisher pelo ID
+    @DeleteMapping("/{id}")      // Define um endpoint DELETE para remover um publisher pelo ID
     public ResponseEntity<?> deletePublisherById(@PathVariable Long id) {
-        try {
             boolean deletedPublisher = publisherService.deletePublisherById(id);
-
-            if (deletedPublisher) {
-                return ResponseEntity.status(HttpStatus.OK).body("Publisher deleted successfully");
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Publisher not found");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting publisher");
-        }
+            return new ResponseEntity<>(HttpStatus.OK);
     }
 }

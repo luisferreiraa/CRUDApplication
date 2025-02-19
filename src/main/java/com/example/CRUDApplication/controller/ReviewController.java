@@ -31,22 +31,13 @@ public class ReviewController {
     @Autowired
     private ReviewService reviewService;
 
-    @GetMapping("/getAllByBookId/{bookId}")
-    public ResponseEntity<?> getAllReviewsByBookId (@PathVariable Long bookId) {
-        try {
-            List<Review> reviewList = reviewService.getAllReviewsByBookId(bookId);
-            return ResponseEntity.ok(reviewList);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+    @GetMapping("/{bookId}")
+    public ResponseEntity<List<Review>> getAllReviewsByBookId(@PathVariable Long bookId) {
+        List<Review> reviewList = reviewService.getAllReviewsByBookId(bookId);
+        return ResponseEntity.ok(reviewList);
     }
 
     // todo Criar /getAllByUserId
-
-
-
 
 
 }

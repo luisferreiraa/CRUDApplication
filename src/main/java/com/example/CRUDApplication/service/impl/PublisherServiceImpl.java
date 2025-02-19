@@ -2,6 +2,8 @@ package com.example.CRUDApplication.service.impl;
 
 import com.example.CRUDApplication.dto.PublisherDTO;
 import com.example.CRUDApplication.dto.PublisherRequest;
+import com.example.CRUDApplication.exception.ObjectNotFoundException;
+import com.example.CRUDApplication.exception.RequestDataMissingException;
 import com.example.CRUDApplication.model.Publisher;
 import com.example.CRUDApplication.repo.PublisherRepo;
 import com.example.CRUDApplication.service.PublisherService;
@@ -30,7 +32,7 @@ public class PublisherServiceImpl implements PublisherService {
 
         // Se não encontrar publishers, lança uma excepção
         if (publisherList.isEmpty()) {
-            throw new NoSuchElementException("No publishers found");
+            throw new ObjectNotFoundException("No publishers found in the system");
         }
         // Se encontrar, devolve a lista de publishers
         return publisherList;
@@ -43,7 +45,7 @@ public class PublisherServiceImpl implements PublisherService {
 
         // Se o publisher não existir, lança uma excepção
         if (publisherDB.isEmpty()) {
-            throw new NoSuchElementException("No publisher found");
+            throw new ObjectNotFoundException("No publisher found with ID: " + id);
         }
         // Converte Publisher em PublisherDTO e retorna
         return publisherDB.map(PublisherDTO::new);
@@ -53,7 +55,7 @@ public class PublisherServiceImpl implements PublisherService {
     public Publisher addPublisher(PublisherRequest newPublisher) {
         // Valida se o nome do publisher foi fornecido
         if (newPublisher.getName() == null || newPublisher.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Publisher name is required");
+            throw new RequestDataMissingException("Publisher name is required");
         }
 
         // Cria uma nova entidade a partir do DTO recebido
@@ -68,12 +70,12 @@ public class PublisherServiceImpl implements PublisherService {
     public Publisher updatePublisherName(Long id, PublisherRequest updateData) {
         // Valida se o nome do publisher foi fornecido
         if (updateData.getName() == null || updateData.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Name is required");
+            throw new RequestDataMissingException("Publisher name is required");
         }
 
         // Busca o publisher pelo ID e lança uma excepção se não for encontrado
         Publisher publisherDB = publisherRepo.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Publisher not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Publisher not found with ID: " + id));
 
         // Atualiza o nome do publisher
         publisherDB.setName(updateData.getName());
@@ -89,9 +91,6 @@ public class PublisherServiceImpl implements PublisherService {
             publisherRepo.deleteById(id);
             return true;
         }
-        throw new NoSuchElementException();
+        throw new ObjectNotFoundException("Publisher not found with ID: " + id);
     }
-
-
-
 }

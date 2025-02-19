@@ -2,6 +2,8 @@ package com.example.CRUDApplication.service.impl;
 
 import com.example.CRUDApplication.dto.CategoryDTO;
 import com.example.CRUDApplication.dto.CategoryRequest;
+import com.example.CRUDApplication.exception.ObjectNotFoundException;
+import com.example.CRUDApplication.exception.RequestDataMissingException;
 import com.example.CRUDApplication.model.Category;
 import com.example.CRUDApplication.repo.CategoryRepo;
 import com.example.CRUDApplication.service.CategoryService;
@@ -30,7 +32,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         // Se não encontrar categorias, lança uma excepção
         if (categoryList.isEmpty()) {
-            throw new NoSuchElementException("No categories found");
+            throw new ObjectNotFoundException("No categories available in the system");
         }
 
         // Se encontrar, devolve a lista de categorias
@@ -44,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         // Se a cateogira não existir, lança uma excepção
         if (categoryDB.isEmpty()) {
-            throw new NoSuchElementException("No category found");
+            throw new ObjectNotFoundException("No category found with ID: " + id);
         }
 
         // Converte Category em CategoryDTO e retorna
@@ -55,7 +57,7 @@ public class CategoryServiceImpl implements CategoryService {
     public Category addCategory(CategoryRequest newCategory) {
         // Valida se o nome da categoria foi fornecido
         if (newCategory.getName() == null || newCategory.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Category name is required");
+            throw new RequestDataMissingException("Category name is required");
         }
 
         // Cria uma nova entidade a partir do DTO recebido
@@ -70,12 +72,12 @@ public class CategoryServiceImpl implements CategoryService {
     public Category updateCategoryName(Long id, CategoryRequest updateData) {
         // Valida se o nome da categorua foi fornecido
         if (updateData.getName() == null || updateData.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Name is required");
+            throw new RequestDataMissingException("Category name is required");
         }
 
         // Busca a categoria pelo ID e lança uma excepção se não for encontrado
         Category categoryDB = categoryRepo.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Category not found"));
+                .orElseThrow(() -> new ObjectNotFoundException("Category not found with ID: " + id));
 
         // Atualiza o nome da categoria
         categoryDB.setName(updateData.getName());
@@ -91,7 +93,7 @@ public class CategoryServiceImpl implements CategoryService {
             categoryRepo.deleteById(id);
             return true;
         }
-        throw new NoSuchElementException("Category not found");
+        throw new ObjectNotFoundException("Category not found with ID: " + id);
     }
 
 

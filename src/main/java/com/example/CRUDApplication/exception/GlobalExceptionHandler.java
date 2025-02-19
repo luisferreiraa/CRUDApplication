@@ -1,6 +1,7 @@
 package com.example.CRUDApplication.exception;
 
 import com.example.CRUDApplication.response.ErrorResponse;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -28,6 +29,26 @@ public class GlobalExceptionHandler {
                 "Required request data is missing"
         );
         return new ResponseEntity<>(dataMissing, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RecordAlreadyExistsException.class)
+    public ResponseEntity<?> handleRecordAlreadyExistsException(RecordAlreadyExistsException exception) {
+        ErrorResponse alreadyExists = new ErrorResponse(
+                LocalDateTime.now(),
+                exception.getMessage(),
+                "Record already exists in the system"
+        );
+        return new ResponseEntity<>(alreadyExists, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ResourceNotAvailableException.class)
+    public ResponseEntity<?> handleResourceNotAvailableException(ResourceNotAvailableException exception) {
+        ErrorResponse notAvailable = new ErrorResponse(
+                LocalDateTime.now(),
+                exception.getMessage(),
+                "Resource not available in the system"
+        );
+        return new ResponseEntity<>(notAvailable, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)

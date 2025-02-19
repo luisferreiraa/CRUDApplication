@@ -27,89 +27,46 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/getAll")
-    public ResponseEntity<?> getAllUsers() {
-        try {
-            List<User> userList = userService.getAllUsers();
-            return ResponseEntity.ok(userList);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving publishers");
-        }
+    @GetMapping("/")
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> userList = userService.getAllUsers();
+        return ResponseEntity.ok(userList);
     }
 
-    @GetMapping("/getById/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable Long id) {
-        try {
-            UserDTO user = userService.getUserById(id)
-                    .orElseThrow(() -> new NoSuchElementException("No user found with this ID"));
-
-            return ResponseEntity.ok(user);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving user");
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<UserDTO>> getUserById(@PathVariable Long id) {
+        Optional<UserDTO> user = userService.getUserById(id);
+        return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/add")
+    @PostMapping("/")
     public ResponseEntity<?> addUser(@RequestBody UserRequest user) {
-        try {
-            User savedUser = userService.addUser(user);
-            return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating user");
-        }
+        User savedUser = userService.addUser(user);
+        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
-    @PutMapping("/updateById/{id}")
-    public ResponseEntity<?> updateUserUserName(@PathVariable Long id, @RequestBody UserRequest updateData) {
-        try {
-            User updatedUser = userService.updateUserUsername(id, updateData);
-            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating user");
-        }
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUserUserName(@PathVariable Long id, @RequestBody UserRequest updateData) {
+        User updatedUser = userService.updateUserUsername(id, updateData);
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
-    @DeleteMapping("/deleteById/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
-        try {
-            boolean deletedUser = userService.deleteUserById(id);
-
-            if (deletedUser) {
-                return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully");
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting user");
-        }
+        boolean deletedUser = userService.deleteUserById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("{userId}/addBorrowedBook/{bookId}")
+    @PutMapping("{userId}/books/{bookId}")
     public ResponseEntity<User> addBorrowedBookToUser(@PathVariable Long userId, @PathVariable Long bookId) {
         User updatedUser = userService.addBorrowedBookToUser(userId, bookId);
         return ResponseEntity.ok(updatedUser);
     }
 
-    @PutMapping("{userId}/removeBorrowedBook/{bookId}")
-    public ResponseEntity<?> removeBorrowedBookFromUser(@PathVariable Long userId, @PathVariable Long bookId) {
-        try {
-            User updatedUser = userService.removeBorrowedBookFromUser(userId, bookId);
-            return ResponseEntity.ok(updatedUser);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding borrowed book");
-        }
+    @DeleteMapping("{userId}/books/{bookId}")
+    public ResponseEntity<User> removeBorrowedBookFromUser(@PathVariable Long userId, @PathVariable Long bookId) {
+        User updatedUser = userService.removeBorrowedBookFromUser(userId, bookId);
+        return ResponseEntity.ok(updatedUser);
     }
 
 

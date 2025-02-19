@@ -1,5 +1,6 @@
 package com.example.CRUDApplication.service.impl;
 
+import com.example.CRUDApplication.exception.ObjectNotFoundException;
 import com.example.CRUDApplication.model.Review;
 import com.example.CRUDApplication.repo.ReviewRepo;
 import com.example.CRUDApplication.service.ReviewService;
@@ -27,7 +28,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         // Se não encontrar reviews, lança excepção
         if (reviewList.isEmpty()) {
-            throw new NoSuchElementException("No reviews found for that book");
+            throw new ObjectNotFoundException("No reviews found book with ID: " + bookId);
         }
         // Se encontrar, devolve a lista de reviews
         return reviewList;
