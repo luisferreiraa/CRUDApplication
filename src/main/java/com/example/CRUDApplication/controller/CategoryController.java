@@ -1,7 +1,7 @@
 package com.example.CRUDApplication.controller;
 
 import com.example.CRUDApplication.dto.CategoryWithBooksDTO;
-import com.example.CRUDApplication.dto.CategoryRequest;
+import com.example.CRUDApplication.dto.CategoryNameDTO;
 import com.example.CRUDApplication.model.Category;
 import com.example.CRUDApplication.repo.CategoryRepo;
 import com.example.CRUDApplication.service.CategoryService;
@@ -29,25 +29,31 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping("/")
-    public ResponseEntity<List<CategoryWithBooksDTO>> getAllCategories() {
-        List<CategoryWithBooksDTO> categoryList = categoryService.getAllCategories();
+    public ResponseEntity<List<CategoryNameDTO>> getAllCategories() {
+        List<CategoryNameDTO> categoryList = categoryService.getAllCategories();
         return ResponseEntity.ok(categoryList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<CategoryWithBooksDTO>> getCategoryById(@PathVariable Long id) {
-        Optional<CategoryWithBooksDTO> category = categoryService.getCategoryById(id);
+    public ResponseEntity<Optional<CategoryNameDTO>> getCategoryById(@PathVariable Long id) {
+        Optional<CategoryNameDTO> category = categoryService.getCategoryById(id);
+        return ResponseEntity.ok(category);
+    }
+
+    @GetMapping("/{id}/books")
+    public ResponseEntity<Optional<CategoryWithBooksDTO>> getCategoryWithBooksById(@PathVariable Long id) {
+        Optional<CategoryWithBooksDTO> category = categoryService.getCategoryBooksById(id);
         return ResponseEntity.ok(category);
     }
 
     @PostMapping("/")
-    public ResponseEntity<Category> addCategory(@RequestBody CategoryRequest category) {
+    public ResponseEntity<Category> addCategory(@RequestBody CategoryNameDTO category) {
         Category savedCategory = categoryService.addCategory(category);
         return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategoryName(@PathVariable Long id, @RequestBody CategoryRequest updateData) {
+    public ResponseEntity<Category> updateCategoryName(@PathVariable Long id, @RequestBody CategoryNameDTO updateData) {
         Category updatedCategory = categoryService.updateCategoryName(id, updateData);
         return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
     }

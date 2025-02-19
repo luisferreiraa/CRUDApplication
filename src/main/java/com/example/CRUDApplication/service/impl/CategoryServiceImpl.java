@@ -1,7 +1,7 @@
 package com.example.CRUDApplication.service.impl;
 
+import com.example.CRUDApplication.dto.CategoryNameDTO;
 import com.example.CRUDApplication.dto.CategoryWithBooksDTO;
-import com.example.CRUDApplication.dto.CategoryRequest;
 import com.example.CRUDApplication.exception.ObjectNotFoundException;
 import com.example.CRUDApplication.exception.RequestDataMissingException;
 import com.example.CRUDApplication.model.Category;
@@ -26,7 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepo categoryRepo;
 
     @Override
-    public List<CategoryWithBooksDTO> getAllCategories() {
+    public List<CategoryNameDTO> getAllCategories() {
         // Busca todas as categorias da base de dados
         List<Category> categoryList = categoryRepo.findAll();
 
@@ -37,12 +37,12 @@ public class CategoryServiceImpl implements CategoryService {
 
         // Se encontrar, devolve a lista de categorias
         return categoryList.stream()
-                .map(CategoryWithBooksDTO::new)
+                .map(CategoryNameDTO::new)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<CategoryWithBooksDTO> getCategoryById(Long id) {
+    public Optional<CategoryNameDTO> getCategoryById(Long id) {
         // Busca uma categoria pelo ID
         Optional<Category> categoryDB = categoryRepo.findById(id);
 
@@ -52,11 +52,20 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         // Converte Category em CategoryDTO e retorna
-        return categoryDB.map(CategoryWithBooksDTO::new);
+        return categoryDB.map(CategoryNameDTO::new);
     }
 
     @Override
-    public Category addCategory(CategoryRequest newCategory) {
+    public Optional<CategoryWithBooksDTO> getCategoryBooksById(Long categoryId) {
+        return categoryRepo.findById(categoryId)
+                .map(CategoryWithBooksDTO::new)
+                .or(() -> {
+                    throw new ObjectNotFoundException("No category found with ID: " + categoryId);
+                });
+    }
+
+    @Override
+    public Category addCategory(CategoryNameDTO newCategory) {
         // Valida se o nome da categoria foi fornecido
         if (newCategory.getName() == null || newCategory.getName().trim().isEmpty()) {
             throw new RequestDataMissingException("Category name is required");
@@ -71,7 +80,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category updateCategoryName(Long id, CategoryRequest updateData) {
+    public Category updateCategoryName(Long id, CategoryNameDTO updateData) {
         // Valida se o nome da categorua foi fornecido
         if (updateData.getName() == null || updateData.getName().trim().isEmpty()) {
             throw new RequestDataMissingException("Category name is required");

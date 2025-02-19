@@ -1,20 +1,16 @@
 package com.example.CRUDApplication.controller;
 
-import com.example.CRUDApplication.dto.CategoryRequest;
 import com.example.CRUDApplication.dto.UserDTO;
 import com.example.CRUDApplication.dto.UserRequest;
-import com.example.CRUDApplication.model.Category;
 import com.example.CRUDApplication.model.User;
 import com.example.CRUDApplication.repo.UserRepo;
 import com.example.CRUDApplication.service.UserService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
