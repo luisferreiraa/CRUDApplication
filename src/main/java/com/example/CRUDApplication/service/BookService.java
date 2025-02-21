@@ -1,10 +1,9 @@
 package com.example.CRUDApplication.service;
 
 import com.example.CRUDApplication.dto.BookDTO;
-import com.example.CRUDApplication.dto.BookRequest;
+import com.example.CRUDApplication.dto.BookTitleDTO;
 import com.example.CRUDApplication.dto.ReviewDTO;
 import com.example.CRUDApplication.model.Book;
-import com.example.CRUDApplication.model.Review;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,8 +11,8 @@ import java.util.Optional;
 public interface BookService {
     List<Book> getAllBooks();
     Optional<BookDTO> getBookById(Long id);
-    Book addBook(BookRequest book);
-    Book updateBookTitle(Long id, BookRequest updateBook);
+    Book addBook(BookTitleDTO book);
+    Book updateBookTitle(Long id, BookTitleDTO updateBook);
     Book updateBookCopies(Long bookId, Integer copies);
     boolean deleteBookById(Long id);
     Book addAuthorToBook(Long bookId, Long authorId);

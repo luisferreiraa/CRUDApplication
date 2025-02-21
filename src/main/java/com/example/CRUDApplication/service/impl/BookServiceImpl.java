@@ -1,7 +1,7 @@
 package com.example.CRUDApplication.service.impl;
 
 import com.example.CRUDApplication.dto.BookDTO;
-import com.example.CRUDApplication.dto.BookRequest;
+import com.example.CRUDApplication.dto.BookTitleDTO;
 import com.example.CRUDApplication.dto.ReviewDTO;
 import com.example.CRUDApplication.exception.ObjectNotFoundException;
 import com.example.CRUDApplication.exception.RequestDataMissingException;
@@ -70,7 +70,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book addBook(BookRequest newBook) {
+    public Book addBook(BookTitleDTO newBook) {
         // Valida se o título do livro foi fornecido
         if (newBook.getTitle() == null || newBook.getTitle().trim().isEmpty()) {
             throw new RequestDataMissingException("Book title is required");
@@ -85,7 +85,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book updateBookTitle(Long id, BookRequest updateData) {
+    public Book updateBookTitle(Long id, BookTitleDTO updateData) {
         // Valida se o título do book foi fornecido
         if (updateData.getTitle() == null || updateData.getTitle().trim().isEmpty()) {
             throw new RequestDataMissingException("Book title is required");

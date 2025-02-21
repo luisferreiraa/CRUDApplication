@@ -1,7 +1,7 @@
 package com.example.CRUDApplication.service.impl;
 
 import com.example.CRUDApplication.dto.AuthorWithBooksDTO;
-import com.example.CRUDApplication.dto.AuthorCreateRequestDTO;
+import com.example.CRUDApplication.dto.AuthorNameDTO;
 import com.example.CRUDApplication.exception.ObjectNotFoundException;
 import com.example.CRUDApplication.exception.RequestDataMissingException;
 import com.example.CRUDApplication.model.Author;
@@ -54,7 +54,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public Author addAuthor(AuthorCreateRequestDTO authorRequest) {
+    public Author addAuthor(AuthorNameDTO authorRequest) {
         // Valida se o nome do autor foi fornecido
         if (authorRequest.getName() == null || authorRequest.getName().trim().isEmpty()) {
             throw new RequestDataMissingException("Author name is required");
@@ -69,7 +69,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public Author updateAuthorName(Long id, AuthorCreateRequestDTO updateData) {
+    public Author updateAuthorName(Long id, AuthorNameDTO updateData) {
         // Valida se o nome do autor foi fornecido
         if (updateData.getName() == null || updateData.getName().trim().isEmpty()) {
             throw new RequestDataMissingException("Author name is required");

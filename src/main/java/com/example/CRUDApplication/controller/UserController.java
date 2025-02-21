@@ -1,7 +1,7 @@
 package com.example.CRUDApplication.controller;
 
 import com.example.CRUDApplication.dto.UserDTO;
-import com.example.CRUDApplication.dto.UserRequest;
+import com.example.CRUDApplication.dto.UserUsernameDTO;
 import com.example.CRUDApplication.model.User;
 import com.example.CRUDApplication.repo.UserRepo;
 import com.example.CRUDApplication.service.UserService;
@@ -36,13 +36,13 @@ public class UserController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> addUser(@RequestBody UserRequest user) {
+    public ResponseEntity<?> addUser(@RequestBody UserUsernameDTO user) {
         User savedUser = userService.addUser(user);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUserUserName(@PathVariable Long id, @RequestBody UserRequest updateData) {
+    public ResponseEntity<User> updateUserUserName(@PathVariable Long id, @RequestBody UserUsernameDTO updateData) {
         User updatedUser = userService.updateUserUsername(id, updateData);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }

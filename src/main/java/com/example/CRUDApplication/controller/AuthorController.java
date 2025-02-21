@@ -1,6 +1,6 @@
 package com.example.CRUDApplication.controller;
 
-import com.example.CRUDApplication.dto.AuthorCreateRequestDTO;
+import com.example.CRUDApplication.dto.AuthorNameDTO;
 import com.example.CRUDApplication.dto.AuthorWithBooksDTO;
 import com.example.CRUDApplication.model.Author;
 import com.example.CRUDApplication.repo.AuthorRepo;
@@ -40,13 +40,13 @@ public class AuthorController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Author> addAuthor(@RequestBody AuthorCreateRequestDTO author) {
+    public ResponseEntity<Author> addAuthor(@RequestBody AuthorNameDTO author) {
         Author savedAuthor = authorService.addAuthor(author);
         return new ResponseEntity<>(savedAuthor, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Author> updateAuthorName(@PathVariable Long id, @RequestBody AuthorCreateRequestDTO updateData) {
+    public ResponseEntity<Author> updateAuthorName(@PathVariable Long id, @RequestBody AuthorNameDTO updateData) {
         Author updatedAuthor = authorService.updateAuthorName(id, updateData);
         return ResponseEntity.ok(updatedAuthor);
     }

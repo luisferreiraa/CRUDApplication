@@ -1,7 +1,7 @@
 package com.example.CRUDApplication.controller;
 
 import com.example.CRUDApplication.dto.BookDTO;
-import com.example.CRUDApplication.dto.BookRequest;
+import com.example.CRUDApplication.dto.BookTitleDTO;
 import com.example.CRUDApplication.dto.ReviewDTO;
 import com.example.CRUDApplication.model.Book;
 
@@ -37,13 +37,13 @@ public class BookController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Book> addBook(@RequestBody BookRequest book) {
+    public ResponseEntity<Book> addBook(@RequestBody BookTitleDTO book) {
         Book savedBook = bookService.addBook(book);
         return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBookById(@PathVariable Long id, @RequestBody BookRequest updateData) {
+    public ResponseEntity<Book> updateBookById(@PathVariable Long id, @RequestBody BookTitleDTO updateData) {
         Book updatedBook = bookService.updateBookTitle(id, updateData);
         return new ResponseEntity<>(updatedBook, HttpStatus.OK);
     }

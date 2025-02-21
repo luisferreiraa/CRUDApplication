@@ -1,7 +1,7 @@
 package com.example.CRUDApplication.controller;
 
 import com.example.CRUDApplication.dto.PublisherDTO;
-import com.example.CRUDApplication.dto.PublisherRequest;
+import com.example.CRUDApplication.dto.PublisherNameDTO;
 import com.example.CRUDApplication.model.Publisher;
 import com.example.CRUDApplication.repo.PublisherRepo;
 import com.example.CRUDApplication.service.PublisherService;
@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 // Trata requisições HTTP (recebe e responde)
@@ -42,13 +41,13 @@ public class PublisherController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Publisher> addPublisher(@RequestBody PublisherRequest publisher) {
+    public ResponseEntity<Publisher> addPublisher(@RequestBody PublisherNameDTO publisher) {
         Publisher savedPublisher = publisherService.addPublisher(publisher);
         return new ResponseEntity<>(savedPublisher, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Publisher> updatePublisherById(@PathVariable Long id, @RequestBody PublisherRequest updateData) {
+    public ResponseEntity<Publisher> updatePublisherById(@PathVariable Long id, @RequestBody PublisherNameDTO updateData) {
             Publisher updatedPublisher = publisherService.updatePublisherName(id, updateData);
             return new ResponseEntity<>(updatedPublisher, HttpStatus.OK);
     }

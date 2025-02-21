@@ -1,7 +1,7 @@
 package com.example.CRUDApplication.service.impl;
 
 import com.example.CRUDApplication.dto.PublisherDTO;
-import com.example.CRUDApplication.dto.PublisherRequest;
+import com.example.CRUDApplication.dto.PublisherNameDTO;
 import com.example.CRUDApplication.exception.ObjectNotFoundException;
 import com.example.CRUDApplication.exception.RequestDataMissingException;
 import com.example.CRUDApplication.model.Publisher;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 // Contém a lógica de negócio
@@ -52,7 +51,7 @@ public class PublisherServiceImpl implements PublisherService {
     }
 
     @Override
-    public Publisher addPublisher(PublisherRequest newPublisher) {
+    public Publisher addPublisher(PublisherNameDTO newPublisher) {
         // Valida se o nome do publisher foi fornecido
         if (newPublisher.getName() == null || newPublisher.getName().trim().isEmpty()) {
             throw new RequestDataMissingException("Publisher name is required");
@@ -67,7 +66,7 @@ public class PublisherServiceImpl implements PublisherService {
     }
 
     @Override
-    public Publisher updatePublisherName(Long id, PublisherRequest updateData) {
+    public Publisher updatePublisherName(Long id, PublisherNameDTO updateData) {
         // Valida se o nome do publisher foi fornecido
         if (updateData.getName() == null || updateData.getName().trim().isEmpty()) {
             throw new RequestDataMissingException("Publisher name is required");

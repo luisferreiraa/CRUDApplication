@@ -6,7 +6,7 @@ package com.example.CRUDApplication.service.impl;
 // Não deve lidar com detalhes de HTTP (como códigos de status)
 
 import com.example.CRUDApplication.dto.UserDTO;
-import com.example.CRUDApplication.dto.UserRequest;
+import com.example.CRUDApplication.dto.UserUsernameDTO;
 import com.example.CRUDApplication.exception.ObjectNotFoundException;
 import com.example.CRUDApplication.exception.RecordAlreadyExistsException;
 import com.example.CRUDApplication.exception.RequestDataMissingException;
@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User addUser(UserRequest newUser) {
+    public User addUser(UserUsernameDTO newUser) {
         // Valida se o username do user foi fornecido
         if (newUser.getUsername() == null || newUser.getUsername().trim().isEmpty()) {
             throw new RequestDataMissingException("User username is required");
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUserUsername(Long id, UserRequest updateData) {
+    public User updateUserUsername(Long id, UserUsernameDTO updateData) {
         // Valida se o username foi fornecido
         if (updateData.getUsername() == null || updateData.getUsername().trim().isEmpty()) {
             throw new RequestDataMissingException("User username is required");
