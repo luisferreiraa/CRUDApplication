@@ -2,13 +2,20 @@ package com.example.CRUDApplication.dto;
 
 import com.example.CRUDApplication.model.Publisher;
 
-public class PublisherDTO {
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class PublisherWithBooksDTO {
     private Long id;
     private String name;
+    private List<BookWithAllDTO> books;
 
-    public PublisherDTO(Publisher publisher) {
+    public PublisherWithBooksDTO(Publisher publisher) {
         this.id = publisher.getId();
         this.name = publisher.getName();
+        this.books = publisher.getBooks().stream()
+                .map(BookWithAllDTO::new).
+                collect(Collectors.toList());
     }
 
     // Getters e Setters
@@ -27,5 +34,13 @@ public class PublisherDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<BookWithAllDTO> getBooks() {
+        return books;
+    }
+
+    public void setBooks(List<BookWithAllDTO> books) {
+        this.books = books;
     }
 }

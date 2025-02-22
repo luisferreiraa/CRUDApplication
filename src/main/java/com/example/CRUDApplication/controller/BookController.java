@@ -1,12 +1,14 @@
 package com.example.CRUDApplication.controller;
 
 import com.example.CRUDApplication.dto.BookDTO;
+import com.example.CRUDApplication.dto.BookWithAllDTO;
 import com.example.CRUDApplication.dto.BookTitleDTO;
 import com.example.CRUDApplication.dto.ReviewDTO;
 import com.example.CRUDApplication.model.Book;
 
 import com.example.CRUDApplication.repo.BookRepo;
 import com.example.CRUDApplication.service.BookService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,26 +27,26 @@ public class BookController {
     private BookService bookService;
 
     @GetMapping("/")
-    public ResponseEntity<List<Book>> getAllBooks() {
-        List<Book> bookList = bookService.getAllBooks();
+    public ResponseEntity<List<BookDTO>> getAllBooks() {
+        List<BookDTO> bookList = bookService.getAllBooks();
         return ResponseEntity.ok(bookList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<BookDTO>> getBookById(@PathVariable Long id) {
-        Optional<BookDTO> book = bookService.getBookById(id);
+    public ResponseEntity<Optional<BookWithAllDTO>> getBookById(@PathVariable Long id) {
+        Optional<BookWithAllDTO> book = bookService.getBookById(id);
         return ResponseEntity.ok(book);
     }
 
     @PostMapping("/")
-    public ResponseEntity<Book> addBook(@RequestBody BookTitleDTO book) {
-        Book savedBook = bookService.addBook(book);
+    public ResponseEntity<BookDTO> addBook(@Valid @RequestBody BookTitleDTO book) {
+        BookDTO savedBook = bookService.addBook(book);
         return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBookById(@PathVariable Long id, @RequestBody BookTitleDTO updateData) {
-        Book updatedBook = bookService.updateBookTitle(id, updateData);
+    public ResponseEntity<BookDTO> updateBookById(@PathVariable Long id, @Valid @RequestBody BookTitleDTO updateData) {
+        BookDTO updatedBook = bookService.updateBookTitle(id, updateData);
         return new ResponseEntity<>(updatedBook, HttpStatus.OK);
     }
 

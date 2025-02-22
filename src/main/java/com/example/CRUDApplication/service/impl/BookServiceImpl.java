@@ -1,6 +1,7 @@
 package com.example.CRUDApplication.service.impl;
 
 import com.example.CRUDApplication.dto.BookDTO;
+import com.example.CRUDApplication.dto.BookWithAllDTO;
 import com.example.CRUDApplication.dto.BookTitleDTO;
 import com.example.CRUDApplication.dto.ReviewDTO;
 import com.example.CRUDApplication.exception.ObjectNotFoundException;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 // Contém a lógica de negócio
 // Faz validações relacionadas às regras do domínio
@@ -43,7 +45,7 @@ public class BookServiceImpl implements BookService {
     private UserRepo userRepo;
 
     @Override
-    public List<Book> getAllBooks() {
+    public List<BookDTO> getAllBooks() {
         // Busca todos os livros da base de dados
         List<Book> bookList = bookRepo.findAll();
 
@@ -52,44 +54,36 @@ public class BookServiceImpl implements BookService {
             throw new ObjectNotFoundException("No books available in the system");
         }
         // Se encontrar, devolve a lista de livros
-        return bookList;
+        return bookList.stream()
+                .map(BookDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<BookDTO> getBookById(Long id) {
-        // Busca um book pelo ID
-        Optional<Book> bookDB = bookRepo.findById(id);
-
-        // Se o book não existir, lança uma excepção
-        if (bookDB.isEmpty()) {
-            throw new ObjectNotFoundException("No book found with ID: " + id);
-        }
-
-        // Converte o Book em BookDTO e retorna
-        return bookDB.map(BookDTO::new);
+    public Optional<BookWithAllDTO> getBookById(Long id) {
+        return bookRepo.findById(id)
+                .map(BookWithAllDTO::new)
+                .or(() -> {
+                    throw new ObjectNotFoundException("No book found with ID: " + id);
+                });
     }
 
     @Override
-    public Book addBook(BookTitleDTO newBook) {
-        // Valida se o título do livro foi fornecido
-        if (newBook.getTitle() == null || newBook.getTitle().trim().isEmpty()) {
-            throw new RequestDataMissingException("Book title is required");
-        }
+    public BookDTO addBook(BookTitleDTO newBook) {
 
         // Cria uma nova entidade a partir do DTO recebido
-        Book savedBook = new Book();
-        savedBook.setTitle(newBook.getTitle());
+        Book book = new Book();
+        book.setTitle(newBook.getTitle());
 
-        // Salva o book na base de dados e retorna a entidade persistida
-        return bookRepo.save(savedBook);
+        // Salva o livro na base de dados
+        Book savedBook = bookRepo.save(book);
+
+        // Converte a entidade persistida para DTO antes de retornar
+        return new BookDTO(savedBook);
     }
 
     @Override
-    public Book updateBookTitle(Long id, BookTitleDTO updateData) {
-        // Valida se o título do book foi fornecido
-        if (updateData.getTitle() == null || updateData.getTitle().trim().isEmpty()) {
-            throw new RequestDataMissingException("Book title is required");
-        }
+    public BookDTO updateBookTitle(Long id, BookTitleDTO updateData) {
 
         // Busca o book pelo ID e lança uma excepção se não for encontrado
         Book bookDB = bookRepo.findById(id)
@@ -98,8 +92,11 @@ public class BookServiceImpl implements BookService {
         // Atualiza o título do book
         bookDB.setTitle(updateData.getTitle());
 
-        // Salva e retorna o book atualizado
-        return bookRepo.save(bookDB);
+        // Salva o livro atualizado na base de dados
+        Book updatedBook = bookRepo.save(bookDB);
+
+        // Converte a entidade persistida para DTO antes de retornar
+        return new BookDTO(updatedBook);
     }
 
     @Override

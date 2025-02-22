@@ -1,5 +1,6 @@
 package com.example.CRUDApplication.controller;
 
+import com.example.CRUDApplication.dto.ReviewDTO;
 import com.example.CRUDApplication.model.Book;
 import com.example.CRUDApplication.model.Review;
 import com.example.CRUDApplication.repo.BookRepo;
@@ -32,8 +33,8 @@ public class ReviewController {
     private ReviewService reviewService;
 
     @GetMapping("/{bookId}")
-    public ResponseEntity<List<Review>> getAllReviewsByBookId(@PathVariable Long bookId) {
-        List<Review> reviewList = reviewService.getAllReviewsByBookId(bookId);
+    public ResponseEntity<List<ReviewDTO>> getAllReviewsByBookId(@PathVariable Long bookId) {
+        List<ReviewDTO> reviewList = reviewService.getAllReviewsByBookId(bookId);
         return ResponseEntity.ok(reviewList);
     }
 

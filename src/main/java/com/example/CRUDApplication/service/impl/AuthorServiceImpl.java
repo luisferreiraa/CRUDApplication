@@ -70,10 +70,6 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public AuthorDTO updateAuthorName(Long id, AuthorNameDTO updateData) {
-        // Valida se o nome do autor foi fornecido
-//        if (updateData.getName() == null || updateData.getName().trim().isEmpty()) {
-//            throw new RequestDataMissingException("Author name is required");
-//        }
 
         // Busca o autor pelo ID e lança excepção se não for encontrado
         Author author = authorRepo.findById(id)

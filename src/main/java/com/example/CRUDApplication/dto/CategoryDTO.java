@@ -1,17 +1,17 @@
 package com.example.CRUDApplication.dto;
 
-import com.example.CRUDApplication.model.Publisher;
+import com.example.CRUDApplication.model.Category;
 
-public class PublisherDTO {
+public class CategoryDTO {
     private Long id;
     private String name;
 
-    public PublisherDTO(Publisher publisher) {
-        this.id = publisher.getId();
-        this.name = publisher.getName();
+    public CategoryDTO(Category category) {
+        this.id = category.getId();
+        this.name = category.getName();
     }
 
-    // Getters e Setters
+    // Getter e Setters
 
     public Long getId() {
         return id;

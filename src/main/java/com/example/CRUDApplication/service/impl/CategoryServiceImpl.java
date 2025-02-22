@@ -1,5 +1,6 @@
 package com.example.CRUDApplication.service.impl;
 
+import com.example.CRUDApplication.dto.CategoryDTO;
 import com.example.CRUDApplication.dto.CategoryNameDTO;
 import com.example.CRUDApplication.dto.CategoryWithBooksDTO;
 import com.example.CRUDApplication.exception.ObjectNotFoundException;
@@ -26,7 +27,7 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepo categoryRepo;
 
     @Override
-    public List<CategoryNameDTO> getAllCategories() {
+    public List<CategoryDTO> getAllCategories() {
         // Busca todas as categorias da base de dados
         List<Category> categoryList = categoryRepo.findAll();
 
@@ -37,12 +38,12 @@ public class CategoryServiceImpl implements CategoryService {
 
         // Se encontrar, devolve a lista de categorias
         return categoryList.stream()
-                .map(CategoryNameDTO::new)
+                .map(CategoryDTO::new)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<CategoryNameDTO> getCategoryById(Long id) {
+    public Optional<CategoryDTO> getCategoryById(Long id) {
         // Busca uma categoria pelo ID
         Optional<Category> categoryDB = categoryRepo.findById(id);
 
@@ -52,7 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         // Converte Category em CategoryDTO e retorna
-        return categoryDB.map(CategoryNameDTO::new);
+        return categoryDB.map(CategoryDTO::new);
     }
 
     @Override
@@ -65,26 +66,21 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category addCategory(CategoryNameDTO newCategory) {
-        // Valida se o nome da categoria foi fornecido
-        if (newCategory.getName() == null || newCategory.getName().trim().isEmpty()) {
-            throw new RequestDataMissingException("Category name is required");
-        }
+    public CategoryDTO addCategory(CategoryNameDTO newCategory) {
 
         // Cria uma nova entidade a partir do DTO recebido
         Category saveCategory = new Category();
         saveCategory.setName(newCategory.getName());
 
-        // Salva a categoria na base de dados e retorna a entidade persistida
-        return categoryRepo.save(saveCategory);
+        // Salva a categoria na base de dados
+        Category savedCategory = categoryRepo.save(saveCategory);
+
+        // Converte a entidade persistida para DTO antes de retornar
+        return new CategoryDTO(savedCategory);
     }
 
     @Override
-    public Category updateCategoryName(Long id, CategoryNameDTO updateData) {
-        // Valida se o nome da categorua foi fornecido
-        if (updateData.getName() == null || updateData.getName().trim().isEmpty()) {
-            throw new RequestDataMissingException("Category name is required");
-        }
+    public CategoryDTO updateCategoryName(Long id, CategoryNameDTO updateData) {
 
         // Busca a categoria pelo ID e lança uma excepção se não for encontrado
         Category categoryDB = categoryRepo.findById(id)
@@ -93,8 +89,11 @@ public class CategoryServiceImpl implements CategoryService {
         // Atualiza o nome da categoria
         categoryDB.setName(updateData.getName());
 
-        // Salva e retorna a categoria atualizada
-        return categoryRepo.save(categoryDB);
+        // Salva a categoria atualizada na base de dados
+        Category updatedCategory = categoryRepo.save(categoryDB);
+
+        // Converte a entidade persistida para DTO antes de retornar
+        return new CategoryDTO(updatedCategory);
     }
 
     @Override

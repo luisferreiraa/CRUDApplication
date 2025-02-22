@@ -8,13 +8,13 @@ import java.util.stream.Collectors;
 public class CategoryWithBooksDTO {
     private Long id;
     private String name;
-    private List<BookDTO> books;
+    private List<BookWithAllDTO> books;
 
     public CategoryWithBooksDTO(Category category) {
         this.id = category.getId();
         this.name = category.getName();
         this.books = category.getBooks().stream()
-                .map(BookDTO::new).
+                .map(BookWithAllDTO::new).
                 collect(Collectors.toList());
     }
 
@@ -37,11 +37,11 @@ public class CategoryWithBooksDTO {
         this.name = name;
     }
 
-    public List<BookDTO> getBooks() {
+    public List<BookWithAllDTO> getBooks() {
         return books;
     }
 
-    public void setBooks(List<BookDTO> books) {
+    public void setBooks(List<BookWithAllDTO> books) {
         this.books = books;
     }
 }

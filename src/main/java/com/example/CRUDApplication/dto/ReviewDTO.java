@@ -7,8 +7,8 @@ public class ReviewDTO {
 //    private String reviewerName;
     private String comment;
     private Integer rating;
-    private BookDTO book;
-    private UserDTO user;
+    private BookWithAllDTO book;
+    private UserWithBooksDTO user;
 
     // Construtor vazio necessário para serialização
     public ReviewDTO() {
@@ -21,8 +21,8 @@ public class ReviewDTO {
 //            this.reviewerName = review.getReviewerName();
             this.comment = review.getComment();
             this.rating = review.getRating();
-            this.book = (review.getBook() != null) ? new BookDTO(review.getBook()) : null;
-            this.user = (review.getUser() != null) ? new UserDTO(review.getUser()) : null;
+            this.book = (review.getBook() != null) ? new BookWithAllDTO(review.getBook()) : null;
+            this.user = (review.getUser() != null) ? new UserWithBooksDTO(review.getUser()) : null;
         }
     }
 
@@ -44,11 +44,11 @@ public class ReviewDTO {
 //        this.reviewerName = reviewerName;
 //    }
 
-    public UserDTO getUser() {
+    public UserWithBooksDTO getUser() {
         return user;
     }
 
-    public void setUser(UserDTO user) {
+    public void setUser(UserWithBooksDTO user) {
         this.user = user;
     }
 
@@ -68,11 +68,11 @@ public class ReviewDTO {
         this.rating = rating;
     }
 
-    public BookDTO getBook() {
+    public BookWithAllDTO getBook() {
         return book;
     }
 
-    public void setBook(BookDTO book) {
+    public void setBook(BookWithAllDTO book) {
         this.book = book;
     }
 }

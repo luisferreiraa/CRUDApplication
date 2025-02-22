@@ -1,10 +1,12 @@
 package com.example.CRUDApplication.controller;
 
+import com.example.CRUDApplication.dto.CategoryDTO;
 import com.example.CRUDApplication.dto.CategoryWithBooksDTO;
 import com.example.CRUDApplication.dto.CategoryNameDTO;
 import com.example.CRUDApplication.model.Category;
 import com.example.CRUDApplication.repo.CategoryRepo;
 import com.example.CRUDApplication.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +31,14 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping("/")
-    public ResponseEntity<List<CategoryNameDTO>> getAllCategories() {
-        List<CategoryNameDTO> categoryList = categoryService.getAllCategories();
+    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
+        List<CategoryDTO> categoryList = categoryService.getAllCategories();
         return ResponseEntity.ok(categoryList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<CategoryNameDTO>> getCategoryById(@PathVariable Long id) {
-        Optional<CategoryNameDTO> category = categoryService.getCategoryById(id);
+    public ResponseEntity<Optional<CategoryDTO>> getCategoryById(@PathVariable Long id) {
+        Optional<CategoryDTO> category = categoryService.getCategoryById(id);
         return ResponseEntity.ok(category);
     }
 
@@ -47,14 +49,14 @@ public class CategoryController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Category> addCategory(@RequestBody CategoryNameDTO category) {
-        Category savedCategory = categoryService.addCategory(category);
+    public ResponseEntity<CategoryDTO> addCategory(@Valid @RequestBody CategoryNameDTO category) {
+        CategoryDTO savedCategory = categoryService.addCategory(category);
         return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategoryName(@PathVariable Long id, @RequestBody CategoryNameDTO updateData) {
-        Category updatedCategory = categoryService.updateCategoryName(id, updateData);
+    public ResponseEntity<CategoryDTO> updateCategoryName(@PathVariable Long id, @Valid @RequestBody CategoryNameDTO updateData) {
+        CategoryDTO updatedCategory = categoryService.updateCategoryName(id, updateData);
         return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
     }
 

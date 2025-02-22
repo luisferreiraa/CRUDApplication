@@ -1,5 +1,6 @@
 package com.example.CRUDApplication.service.impl;
 
+import com.example.CRUDApplication.dto.ReviewDTO;
 import com.example.CRUDApplication.exception.ObjectNotFoundException;
 import com.example.CRUDApplication.model.Review;
 import com.example.CRUDApplication.repo.ReviewRepo;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 // Contém a lógica de negócio
 // Faz validações relacionadas às regras do domínio
@@ -22,7 +24,7 @@ public class ReviewServiceImpl implements ReviewService {
     private ReviewRepo reviewRepo;
 
     @Override
-    public List<Review> getAllReviewsByBookId(Long bookId) {
+    public List<ReviewDTO> getAllReviewsByBookId(Long bookId) {
         // Busca todos as reviews de um livro na base de dados
         List<Review> reviewList = reviewRepo.findByBookId(bookId);
 
@@ -31,6 +33,8 @@ public class ReviewServiceImpl implements ReviewService {
             throw new ObjectNotFoundException("No reviews found book with ID: " + bookId);
         }
         // Se encontrar, devolve a lista de reviews
-        return reviewList;
+        return reviewList.stream()
+                .map(ReviewDTO::new)
+                .collect(Collectors.toList());
     }
 }

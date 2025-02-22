@@ -1,10 +1,12 @@
 package com.example.CRUDApplication.controller;
 
 import com.example.CRUDApplication.dto.PublisherDTO;
+import com.example.CRUDApplication.dto.PublisherWithBooksDTO;
 import com.example.CRUDApplication.dto.PublisherNameDTO;
 import com.example.CRUDApplication.model.Publisher;
 import com.example.CRUDApplication.repo.PublisherRepo;
 import com.example.CRUDApplication.service.PublisherService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,26 +31,26 @@ public class PublisherController {
     private PublisherService publisherService;
 
     @GetMapping("/")
-    public ResponseEntity<List<Publisher>> getAllPublishers() {
-        List<Publisher> publisherList = publisherService.getAllPublishers();
+    public ResponseEntity<List<PublisherDTO>> getAllPublishers() {
+        List<PublisherDTO> publisherList = publisherService.getAllPublishers();
         return ResponseEntity.ok(publisherList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<PublisherDTO>> getPublisherById(@PathVariable Long id) {
-        Optional<PublisherDTO> publisher = publisherService.getPublisherById(id);
+    public ResponseEntity<Optional<PublisherWithBooksDTO>> getPublisherById(@PathVariable Long id) {
+        Optional<PublisherWithBooksDTO> publisher = publisherService.getPublisherById(id);
         return ResponseEntity.ok(publisher);
     }
 
     @PostMapping("/")
-    public ResponseEntity<Publisher> addPublisher(@RequestBody PublisherNameDTO publisher) {
-        Publisher savedPublisher = publisherService.addPublisher(publisher);
+    public ResponseEntity<PublisherDTO> addPublisher(@Valid @RequestBody PublisherNameDTO publisher) {
+        PublisherDTO savedPublisher = publisherService.addPublisher(publisher);
         return new ResponseEntity<>(savedPublisher, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Publisher> updatePublisherById(@PathVariable Long id, @RequestBody PublisherNameDTO updateData) {
-            Publisher updatedPublisher = publisherService.updatePublisherName(id, updateData);
+    public ResponseEntity<PublisherDTO> updatePublisherById(@PathVariable Long id, @Valid @RequestBody PublisherNameDTO updateData) {
+            PublisherDTO updatedPublisher = publisherService.updatePublisherName(id, updateData);
             return new ResponseEntity<>(updatedPublisher, HttpStatus.OK);
     }
 

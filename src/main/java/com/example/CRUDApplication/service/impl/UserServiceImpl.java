@@ -6,10 +6,10 @@ package com.example.CRUDApplication.service.impl;
 // Não deve lidar com detalhes de HTTP (como códigos de status)
 
 import com.example.CRUDApplication.dto.UserDTO;
+import com.example.CRUDApplication.dto.UserWithBooksDTO;
 import com.example.CRUDApplication.dto.UserUsernameDTO;
 import com.example.CRUDApplication.exception.ObjectNotFoundException;
 import com.example.CRUDApplication.exception.RecordAlreadyExistsException;
-import com.example.CRUDApplication.exception.RequestDataMissingException;
 import com.example.CRUDApplication.exception.ResourceNotAvailableException;
 import com.example.CRUDApplication.model.Book;
 import com.example.CRUDApplication.model.User;
@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,7 +35,7 @@ public class UserServiceImpl implements UserService {
     private BookRepo bookRepo;
 
     @Override
-    public List<User> getAllUsers() {
+    public List<UserDTO> getAllUsers() {
         // Busca todos os users da base de dados
         List<User> userList = userRepo.findAll();
 
@@ -43,53 +44,49 @@ public class UserServiceImpl implements UserService {
             throw new NoSuchElementException("No users found");
         }
         // Se encontrar, devolve lista de users
-        return userList;
+        return userList.stream()
+                .map(UserDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<UserDTO> getUserById(Long id) {
-        // Busca um user pelo ID
-        Optional<User> userDB = userRepo.findById(id);
-
-        // Se o user não existir, lança uma excepção
-        if (userDB.isEmpty()) {
-            throw new ObjectNotFoundException("No user found with ID: " + id);
-        }
-        // Converte User em UserDTO e retorna
-        return userDB.map(UserDTO::new);
+    public Optional<UserWithBooksDTO> getUserById(Long id) {
+        return userRepo.findById(id)
+                .map(UserWithBooksDTO::new)
+                .or(() -> {
+                    throw new ObjectNotFoundException("No user found with ID: " + id);
+                });
     }
 
     @Override
-    public User addUser(UserUsernameDTO newUser) {
-        // Valida se o username do user foi fornecido
-        if (newUser.getUsername() == null || newUser.getUsername().trim().isEmpty()) {
-            throw new RequestDataMissingException("User username is required");
-        }
+    public UserDTO addUser(UserUsernameDTO newUser) {
 
         // Cria uma nova entidade a partir do DTO fornecido
-        User saveUser = new User();
-        saveUser.setUsername(newUser.getUsername());
+        User user = new User();
+        user.setUsername(newUser.getUsername());
 
-        // Salva o user na base de dados e retorna a entidade persistida
-        return userRepo.save(saveUser);
+        // Salva o user na base de dados
+        User savedUser = userRepo.save(user);
+
+        // Converte a entidade persistida para DTO antes de retornar
+        return new UserDTO(savedUser);
     }
 
     @Override
-    public User updateUserUsername(Long id, UserUsernameDTO updateData) {
-        // Valida se o username foi fornecido
-        if (updateData.getUsername() == null || updateData.getUsername().trim().isEmpty()) {
-            throw new RequestDataMissingException("User username is required");
-        }
+    public UserDTO updateUserUsername(Long id, UserUsernameDTO updateData) {
 
         // Busca o user pelo ID e lança uma excepção se não for encontrado
-        User userDB = userRepo.findById(id)
+        User user = userRepo.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("User not found with ID: " + id));
 
         // Atualiza o username do user
-        userDB.setUsername(updateData.getUsername());
+        user.setUsername(updateData.getUsername());
 
-        // Salva e retorna o user atualizado
-        return userRepo.save(userDB);
+        // Salva o user atualizado na base de dados
+        User updatedUser = userRepo.save(user);
+
+        // Converte a entidade persistida para DTO antes de retornar
+        return new UserDTO(updatedUser);
     }
 
     @Override
@@ -104,7 +101,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User addBorrowedBookToUser(Long userId, Long bookId) {
+    public UserWithBooksDTO addBorrowedBookToUser(Long userId, Long bookId) {
         User userDB = userRepo.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("User not found with ID: " + userId));
 
@@ -124,12 +121,14 @@ public class UserServiceImpl implements UserService {
         // Adiciona o livro à lista de livros emprestados pelo utilizador
         userDB.getBorrowedBooks().add(bookDB);
 
-        return userRepo.save(userDB);
+        User updatedUser = userRepo.save(userDB);
+
+        return new UserWithBooksDTO(updatedUser);
     }
 
     @Override
     @Transactional
-    public User removeBorrowedBookFromUser(Long userId, Long bookId) {
+    public UserWithBooksDTO removeBorrowedBookFromUser(Long userId, Long bookId) {
         User userDB = userRepo.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("User not found with ID: " + userId));
 
@@ -143,7 +142,9 @@ public class UserServiceImpl implements UserService {
 
         userDB.getBorrowedBooks().remove(bookDB);
 
-        return userRepo.save(userDB);
+        User updatedUser = userRepo.save(userDB);
+
+        return new UserWithBooksDTO(updatedUser);
     }
 
 

@@ -10,13 +10,13 @@ import java.util.stream.Collectors;
 public class AuthorWithBooksDTO {
     private Long id;
     private String name;
-    private List<BookDTO> books;
+    private List<BookWithAllDTO> books;
 
     public AuthorWithBooksDTO(Author author) {
         this.id = author.getId();
         this.name = author.getName();
         this.books = author.getBooks().stream()
-                .map(BookDTO::new)  // Converte cada Book num BookDTO
+                .map(BookWithAllDTO::new)  // Converte cada Book num BookDTO
                 .collect(Collectors.toList());
 
     }
@@ -39,11 +39,11 @@ public class AuthorWithBooksDTO {
         this.name = name;
     }
 
-    public List<BookDTO> getBooks() {
+    public List<BookWithAllDTO> getBooks() {
         return books;
     }
 
-    public void setBooks(List<BookDTO> books) {
+    public void setBooks(List<BookWithAllDTO> books) {
         this.books = books;
     }
 }
