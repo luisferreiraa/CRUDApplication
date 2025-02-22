@@ -1,5 +1,6 @@
 package com.example.CRUDApplication.service.impl;
 
+import com.example.CRUDApplication.dto.AuthorDTO;
 import com.example.CRUDApplication.dto.AuthorWithBooksDTO;
 import com.example.CRUDApplication.dto.AuthorNameDTO;
 import com.example.CRUDApplication.exception.ObjectNotFoundException;
@@ -30,7 +31,7 @@ public class AuthorServiceImpl implements AuthorService {
     private BookRepo bookRepo;
 
     @Override
-    public List<AuthorWithBooksDTO> getAllAuthors() {
+    public List<AuthorDTO> getAllAuthors() {
         // Busca todos os autores da base de dados
         List<Author> authorsList = authorRepo.findAll();
 
@@ -40,7 +41,7 @@ public class AuthorServiceImpl implements AuthorService {
         }
         // Se encontrar, devolve a lista de autores
         return authorsList.stream()
-                .map(AuthorWithBooksDTO::new)
+                .map(AuthorDTO::new)
                 .collect(Collectors.toList());
     }
 
@@ -54,26 +55,25 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public Author addAuthor(AuthorNameDTO authorRequest) {
-        // Valida se o nome do autor foi fornecido
-        if (authorRequest.getName() == null || authorRequest.getName().trim().isEmpty()) {
-            throw new RequestDataMissingException("Author name is required");
-        }
+    public AuthorDTO addAuthor(AuthorNameDTO authorRequest) {
 
         // Cria uma nova entidade a partir do DTO recebido
         Author author = new Author();
         author.setName(authorRequest.getName());
 
-        // Salva o autor na base de dados e retorna a entidade persistida
-        return authorRepo.save(author);
+        // Salva o autor na base de dados
+        Author savedAuthor = authorRepo.save(author);
+
+        // Converte a entidade persistida para DTO antes de retornar
+        return new AuthorDTO(savedAuthor);
     }
 
     @Override
-    public Author updateAuthorName(Long id, AuthorNameDTO updateData) {
+    public AuthorDTO updateAuthorName(Long id, AuthorNameDTO updateData) {
         // Valida se o nome do autor foi fornecido
-        if (updateData.getName() == null || updateData.getName().trim().isEmpty()) {
-            throw new RequestDataMissingException("Author name is required");
-        }
+//        if (updateData.getName() == null || updateData.getName().trim().isEmpty()) {
+//            throw new RequestDataMissingException("Author name is required");
+//        }
 
         // Busca o autor pelo ID e lança excepção se não for encontrado
         Author author = authorRepo.findById(id)
@@ -82,8 +82,11 @@ public class AuthorServiceImpl implements AuthorService {
         // Atualiza o nome do autor
         author.setName(updateData.getName());
 
-        // Salva e retorna o autor atualizado
-        return authorRepo.save(author);
+        // Salva o author atualizado na base de dados
+        Author updatedAuthor = authorRepo.save(author);
+
+        // Converte a entidade persistida para DTO antes de retornar
+        return new AuthorDTO(updatedAuthor);
     }
 
     @Override

@@ -1,11 +1,13 @@
 package com.example.CRUDApplication.controller;
 
+import com.example.CRUDApplication.dto.AuthorDTO;
 import com.example.CRUDApplication.dto.AuthorNameDTO;
 import com.example.CRUDApplication.dto.AuthorWithBooksDTO;
 import com.example.CRUDApplication.model.Author;
 import com.example.CRUDApplication.repo.AuthorRepo;
 import com.example.CRUDApplication.repo.BookRepo;
 import com.example.CRUDApplication.service.AuthorService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +30,8 @@ public class AuthorController {
     private AuthorService authorService;
 
     @GetMapping("/")
-    public ResponseEntity<List<AuthorWithBooksDTO>> getAllAuthors() {
-        List<AuthorWithBooksDTO> authorList = authorService.getAllAuthors();
+    public ResponseEntity<List<AuthorDTO>> getAllAuthors() {
+        List<AuthorDTO> authorList = authorService.getAllAuthors();
         return ResponseEntity.ok(authorList);
     }
 
@@ -40,14 +42,14 @@ public class AuthorController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Author> addAuthor(@RequestBody AuthorNameDTO author) {
-        Author savedAuthor = authorService.addAuthor(author);
+    public ResponseEntity<AuthorDTO> addAuthor(@Valid @RequestBody AuthorNameDTO author) {
+        AuthorDTO savedAuthor = authorService.addAuthor(author);
         return new ResponseEntity<>(savedAuthor, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Author> updateAuthorName(@PathVariable Long id, @RequestBody AuthorNameDTO updateData) {
-        Author updatedAuthor = authorService.updateAuthorName(id, updateData);
+    public ResponseEntity<AuthorDTO> updateAuthorName(@PathVariable Long id, @Valid @RequestBody AuthorNameDTO updateData) {
+        AuthorDTO updatedAuthor = authorService.updateAuthorName(id, updateData);
         return ResponseEntity.ok(updatedAuthor);
     }
 
