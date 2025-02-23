@@ -123,6 +123,14 @@ public class Book {
     public void setCategories(List<Category> categories) {
         this.categories = categories;
     }
+
+    public List<User> getBorrowedBy() {
+        return borrowedBy;
+    }
+
+    public void setBorrowedBy(List<User> borrowedBy) {
+        this.borrowedBy = borrowedBy;
+    }
 }
 
 
