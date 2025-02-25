@@ -1,5 +1,6 @@
 package com.example.CRUDApplication.service;
 
+import com.example.CRUDApplication.dto.UserCreateRequestDTO;
 import com.example.CRUDApplication.dto.UserDTO;
 import com.example.CRUDApplication.dto.UserWithBooksDTO;
 import com.example.CRUDApplication.dto.UserUsernameDTO;
@@ -11,7 +12,7 @@ import java.util.Optional;
 public interface UserService {
     List<UserDTO> getAllUsers();
     Optional<UserWithBooksDTO> getUserById(Long id);
-    UserDTO addUser(UserUsernameDTO user);
+    UserDTO addUser(UserCreateRequestDTO user);
     UserDTO updateUserUsername(Long id, UserUsernameDTO updateData);
     boolean deleteUserById(Long id);
     UserWithBooksDTO addBorrowedBookToUser(Long userId, Long bookId);

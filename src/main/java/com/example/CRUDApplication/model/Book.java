@@ -23,7 +23,7 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column                 // Define a coluna 'title' na base de dados
+    @Column(unique = true)                 // Define a coluna 'title' na base de dados
     private String title;
 
     @ManyToOne(fetch = FetchType.EAGER)      // Um Book pertence a um único Publisher

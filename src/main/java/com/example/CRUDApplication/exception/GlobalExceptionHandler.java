@@ -1,6 +1,7 @@
 package com.example.CRUDApplication.exception;
 
 import com.example.CRUDApplication.response.ErrorResponse;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -77,6 +78,16 @@ public class GlobalExceptionHandler {
                 errorMessages
         );
 
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicate(DataIntegrityViolationException exception) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                "Data record cannot be duplicate",
+                "Data integrity error"
+        );
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.CRUDApplication.controller;
 
+import com.example.CRUDApplication.dto.UserCreateRequestDTO;
 import com.example.CRUDApplication.dto.UserDTO;
 import com.example.CRUDApplication.dto.UserWithBooksDTO;
 import com.example.CRUDApplication.dto.UserUsernameDTO;
@@ -38,7 +39,7 @@ public class UserController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<UserDTO> addUser(@Valid @RequestBody UserUsernameDTO user) {
+    public ResponseEntity<UserDTO> addUser(@Valid @RequestBody UserCreateRequestDTO user) {
         UserDTO savedUser = userService.addUser(user);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }

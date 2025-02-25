@@ -5,6 +5,7 @@ package com.example.CRUDApplication.service.impl;
 // Interage com repositórios para acessar a base de dados
 // Não deve lidar com detalhes de HTTP (como códigos de status)
 
+import com.example.CRUDApplication.dto.UserCreateRequestDTO;
 import com.example.CRUDApplication.dto.UserDTO;
 import com.example.CRUDApplication.dto.UserWithBooksDTO;
 import com.example.CRUDApplication.dto.UserUsernameDTO;
@@ -12,12 +13,14 @@ import com.example.CRUDApplication.exception.ObjectNotFoundException;
 import com.example.CRUDApplication.exception.RecordAlreadyExistsException;
 import com.example.CRUDApplication.exception.ResourceNotAvailableException;
 import com.example.CRUDApplication.model.Book;
+import com.example.CRUDApplication.model.UserRole;
 import com.example.CRUDApplication.model.User;
 import com.example.CRUDApplication.repo.BookRepo;
 import com.example.CRUDApplication.repo.UserRepo;
 import com.example.CRUDApplication.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -59,11 +62,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO addUser(UserUsernameDTO newUser) {
+    public UserDTO addUser(UserCreateRequestDTO newUser) {
 
-        // Cria uma nova entidade a partir do DTO fornecido
+        // Cria uma nova entidade User
         User user = new User();
         user.setUsername(newUser.getUsername());
+
+        // Encripta a password antes de salvar
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        user.setPassword(passwordEncoder.encode(newUser.getPassword()));
+
+        // Define role (se não vier definido, assume USER por padrão
+        user.setRole(newUser.getRole() != null ? newUser.getRole() : UserRole.USER);
 
         // Salva o user na base de dados
         User savedUser = userRepo.save(user);
