@@ -5,12 +5,15 @@ import com.example.CRUDApplication.dto.BookWithAllDTO;
 import com.example.CRUDApplication.dto.BookTitleDTO;
 import com.example.CRUDApplication.dto.ReviewDTO;
 import com.example.CRUDApplication.model.Book;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface BookService {
-    List<BookDTO> getAllBooks();
+    Page<BookDTO> getAllBooks(Pageable pageable);
+    Page<BookDTO> getBooksByAuthorId(Long id, Pageable pageable);
     Optional<BookWithAllDTO> getBookById(Long id);
     BookDTO addBook(BookTitleDTO book);
     BookDTO updateBookTitle(Long id, BookTitleDTO updateBook);

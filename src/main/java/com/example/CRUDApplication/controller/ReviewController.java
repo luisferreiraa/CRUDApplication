@@ -8,6 +8,8 @@ import com.example.CRUDApplication.repo.ReviewRepo;
 import com.example.CRUDApplication.repo.UserRepo;
 import com.example.CRUDApplication.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +35,8 @@ public class ReviewController {
     private ReviewService reviewService;
 
     @GetMapping("/{bookId}")
-    public ResponseEntity<List<ReviewDTO>> getAllReviewsByBookId(@PathVariable Long bookId) {
-        List<ReviewDTO> reviewList = reviewService.getAllReviewsByBookId(bookId);
+    public ResponseEntity<Page<ReviewDTO>> getAllReviewsByBookId(@PathVariable Long bookId, Pageable pageable) {
+        Page<ReviewDTO> reviewList = reviewService.getAllReviewsByBookId(bookId, pageable);
         return ResponseEntity.ok(reviewList);
     }
 

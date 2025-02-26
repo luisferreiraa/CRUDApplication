@@ -9,6 +9,8 @@ import com.example.CRUDApplication.model.Publisher;
 import com.example.CRUDApplication.repo.PublisherRepo;
 import com.example.CRUDApplication.service.PublisherService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,18 +29,16 @@ public class PublisherServiceImpl implements PublisherService {
     private PublisherRepo publisherRepo;
 
     @Override
-    public List<PublisherDTO> getAllPublishers() {
+    public Page<PublisherDTO> getAllPublishers(Pageable pageable) {
         // Busca todos os publishers da base de dados
-        List<Publisher> publisherList = publisherRepo.findAll();
+        Page<Publisher> publisherList = publisherRepo.findAll(pageable);
 
         // Se não encontrar publishers, lança uma excepção
         if (publisherList.isEmpty()) {
             throw new ObjectNotFoundException("No publishers found in the system");
         }
         // Se encontrar, devolve a lista de publishers
-        return publisherList.stream()
-                .map(PublisherDTO::new)
-                .collect(Collectors.toList());
+        return publisherList.map(PublisherDTO::new);
     }
 
     @Override

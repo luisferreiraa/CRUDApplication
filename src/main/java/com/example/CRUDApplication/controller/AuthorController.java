@@ -9,6 +9,8 @@ import com.example.CRUDApplication.repo.BookRepo;
 import com.example.CRUDApplication.service.AuthorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +32,8 @@ public class AuthorController {
     private AuthorService authorService;
 
     @GetMapping("/")
-    public ResponseEntity<List<AuthorDTO>> getAllAuthors() {
-        List<AuthorDTO> authorList = authorService.getAllAuthors();
+    public ResponseEntity<Page<AuthorDTO>> getAllAuthors(Pageable pageable) {
+        Page<AuthorDTO> authorList = authorService.getAllAuthors(pageable);
         return ResponseEntity.ok(authorList);
     }
 

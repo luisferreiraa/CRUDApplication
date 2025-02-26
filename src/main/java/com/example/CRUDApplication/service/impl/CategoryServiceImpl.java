@@ -9,6 +9,8 @@ import com.example.CRUDApplication.model.Category;
 import com.example.CRUDApplication.repo.CategoryRepo;
 import com.example.CRUDApplication.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,9 +29,9 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepo categoryRepo;
 
     @Override
-    public List<CategoryDTO> getAllCategories() {
+    public Page<CategoryDTO> getAllCategories(Pageable pageable) {
         // Busca todas as categorias da base de dados
-        List<Category> categoryList = categoryRepo.findAll();
+        Page<Category> categoryList = categoryRepo.findAll(pageable);
 
         // Se não encontrar categorias, lança uma excepção
         if (categoryList.isEmpty()) {
@@ -37,9 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         // Se encontrar, devolve a lista de categorias
-        return categoryList.stream()
-                .map(CategoryDTO::new)
-                .collect(Collectors.toList());
+        return categoryList.map(CategoryDTO::new);
     }
 
     @Override

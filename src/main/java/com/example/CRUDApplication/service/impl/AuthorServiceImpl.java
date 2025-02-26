@@ -10,6 +10,8 @@ import com.example.CRUDApplication.repo.AuthorRepo;
 import com.example.CRUDApplication.repo.BookRepo;
 import com.example.CRUDApplication.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,18 +33,16 @@ public class AuthorServiceImpl implements AuthorService {
     private BookRepo bookRepo;
 
     @Override
-    public List<AuthorDTO> getAllAuthors() {
+    public Page<AuthorDTO> getAllAuthors(Pageable pageable) {
         // Busca todos os autores da base de dados
-        List<Author> authorsList = authorRepo.findAll();
+        Page<Author> authorsList = authorRepo.findAll(pageable);
 
         // Se não encontrar autores, lança uma excepção
         if (authorsList.isEmpty()) {
             throw new ObjectNotFoundException("No authors available in the system");
         }
         // Se encontrar, devolve a lista de autores
-        return authorsList.stream()
-                .map(AuthorDTO::new)
-                .collect(Collectors.toList());
+        return authorsList.map(AuthorDTO::new);
     }
 
     @Override

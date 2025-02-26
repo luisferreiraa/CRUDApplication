@@ -20,6 +20,8 @@ import com.example.CRUDApplication.repo.UserRepo;
 import com.example.CRUDApplication.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -38,18 +40,16 @@ public class UserServiceImpl implements UserService {
     private BookRepo bookRepo;
 
     @Override
-    public List<UserDTO> getAllUsers() {
+    public Page<UserDTO> getAllUsers(Pageable pageable) {
         // Busca todos os users da base de dados
-        List<User> userList = userRepo.findAll();
+        Page<User> userList = userRepo.findAll(pageable);
 
         // Se não encontrar users, lança excepção
         if (userList.isEmpty()) {
             throw new NoSuchElementException("No users found");
         }
         // Se encontrar, devolve lista de users
-        return userList.stream()
-                .map(UserDTO::new)
-                .collect(Collectors.toList());
+        return userList.map(UserDTO::new);
     }
 
     @Override

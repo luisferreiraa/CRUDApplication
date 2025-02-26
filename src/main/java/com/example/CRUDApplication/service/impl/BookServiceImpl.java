@@ -11,6 +11,8 @@ import com.example.CRUDApplication.repo.*;
 import com.example.CRUDApplication.service.BookService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,19 +46,42 @@ public class BookServiceImpl implements BookService {
     @Autowired
     private UserRepo userRepo;
 
+//    @Override
+//    public List<BookDTO> getAllBooks() {
+//        // Busca todos os livros da base de dados
+//        List<Book> bookList = bookRepo.findAll();
+//
+//        // Se não encontrar books, lança excepção
+//        if (bookList.isEmpty()) {
+//            throw new ObjectNotFoundException("No books available in the system");
+//        }
+//        // Se encontrar, devolve a lista de livros
+//        return bookList.stream()
+//                .map(BookDTO::new)
+//                .collect(Collectors.toList());
+//    }
+
     @Override
-    public List<BookDTO> getAllBooks() {
+    public Page<BookDTO> getAllBooks(Pageable pageable) {
         // Busca todos os livros da base de dados
-        List<Book> bookList = bookRepo.findAll();
+        Page<Book> booksPage = bookRepo.findAll(pageable);
 
         // Se não encontrar books, lança excepção
-        if (bookList.isEmpty()) {
+        if (booksPage.isEmpty()) {
             throw new ObjectNotFoundException("No books available in the system");
         }
         // Se encontrar, devolve a lista de livros
-        return bookList.stream()
-                .map(BookDTO::new)
-                .collect(Collectors.toList());
+        return booksPage.map(BookDTO::new);
+    }
+
+    @Override
+    public Page<BookDTO> getBooksByAuthorId(Long id, Pageable pageable) {
+        Page<Book> authorBooks = bookRepo.findByAuthorId(id, pageable);
+
+        if(authorBooks.isEmpty()) {
+            throw new ObjectNotFoundException("No books found for author with ID: " + id);
+        }
+        return authorBooks.map(BookDTO::new);
     }
 
     @Override

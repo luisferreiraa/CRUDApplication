@@ -8,6 +8,8 @@ import com.example.CRUDApplication.repo.CategoryRepo;
 import com.example.CRUDApplication.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +33,8 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping("/")
-    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
-        List<CategoryDTO> categoryList = categoryService.getAllCategories();
+    public ResponseEntity<Page<CategoryDTO>> getAllCategories(Pageable pageable) {
+        Page<CategoryDTO> categoryList = categoryService.getAllCategories(pageable);
         return ResponseEntity.ok(categoryList);
     }
 

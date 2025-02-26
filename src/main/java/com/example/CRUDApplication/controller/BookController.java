@@ -10,6 +10,8 @@ import com.example.CRUDApplication.repo.BookRepo;
 import com.example.CRUDApplication.service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,10 +28,22 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
+//    @GetMapping("/")
+//    public ResponseEntity<List<BookDTO>> getAllBooks() {
+//        List<BookDTO> bookList = bookService.getAllBooks();
+//        return ResponseEntity.ok(bookList);
+//    }
+
     @GetMapping("/")
-    public ResponseEntity<List<BookDTO>> getAllBooks() {
-        List<BookDTO> bookList = bookService.getAllBooks();
+    public ResponseEntity<Page<BookDTO>> getAllBooks(Pageable pageable) {
+        Page<BookDTO> bookList = bookService.getAllBooks(pageable);
         return ResponseEntity.ok(bookList);
+    }
+
+    @GetMapping("/{authorId}/author")
+    public ResponseEntity<Page<BookDTO>> getBooksByAuhor(@PathVariable Long id, Pageable pageable) {
+        Page<BookDTO> authorBooks = bookService.getBooksByAuthorId(id, pageable);
+        return ResponseEntity.ok(authorBooks);
     }
 
     @GetMapping("/{id}")
