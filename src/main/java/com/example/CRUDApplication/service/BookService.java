@@ -13,6 +13,9 @@ import java.util.Optional;
 
 public interface BookService {
     Page<BookDTO> getAllBooks(Pageable pageable);
+    List<BookWithAllDTO> getBooksByAuthorId(Long id);
+    List<BookWithAllDTO> getBooksByCategoryId(Long id);
+    List<BookWithAllDTO> getBooksByPublisherId(Long id);
     Optional<BookWithAllDTO> getBookById(Long id);
     BookDTO addBook(BookTitleDTO book);
     BookDTO updateBookTitle(Long id, BookTitleDTO updateBook);

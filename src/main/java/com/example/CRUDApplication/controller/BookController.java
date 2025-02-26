@@ -35,9 +35,27 @@ public class BookController {
 //    }
 
     @GetMapping("/")
-    public ResponseEntity<Page<BookDTO>> getAllBooks(Pageable pageable) {
+    public ResponseEntity<Page<BookDTO>> getAllBooks(Pageable pageable) {       // Permite paginação
         Page<BookDTO> bookList = bookService.getAllBooks(pageable);
         return ResponseEntity.ok(bookList);
+    }
+
+    @GetMapping("/by-author/{authorId}")
+    public ResponseEntity<List<BookWithAllDTO>> getBooksByAuthorId(@PathVariable Long authorId) {
+        List<BookWithAllDTO> books = bookService.getBooksByAuthorId(authorId);
+        return ResponseEntity.ok(books);
+    }
+
+    @GetMapping("/by-category/{categoryId}")
+    public ResponseEntity<List<BookWithAllDTO>> getBooksByCategoryId(@PathVariable Long categoryId) {
+        List<BookWithAllDTO> books = bookService.getBooksByCategoryId(categoryId);
+        return ResponseEntity.ok(books);
+    }
+
+    @GetMapping("/by-publisher/{publisherId}")
+    public ResponseEntity<List<BookWithAllDTO>> getBooksByPublisherId(@PathVariable Long publisherId) {
+        List<BookWithAllDTO> books = bookService.getBooksByPublisherId(publisherId);
+        return ResponseEntity.ok(books);
     }
 
     @GetMapping("/{id}")

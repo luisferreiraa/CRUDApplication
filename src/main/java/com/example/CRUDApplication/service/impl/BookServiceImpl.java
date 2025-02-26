@@ -75,6 +75,45 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public List<BookWithAllDTO> getBooksByAuthorId(Long authorId) {
+        List<Book> bookList = bookRepo.findByAuthorsId(authorId);
+
+        if (bookList.isEmpty()) {
+            throw new ObjectNotFoundException("No books found for author with ID: " + authorId);
+        }
+
+        return bookList.stream()
+                .map(BookWithAllDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BookWithAllDTO> getBooksByPublisherId(Long publisherId) {
+        List<Book> bookList = bookRepo.findByPublishersId(publisherId);
+
+        if (bookList.isEmpty()) {
+            throw new ObjectNotFoundException("No books found for publisher with ID: " + publisherId);
+        }
+
+        return bookList.stream()
+                .map(BookWithAllDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BookWithAllDTO> getBooksByCategoryId(Long categoryId) {
+        List<Book> bookList = bookRepo.findByCategoriesId(categoryId);
+
+        if (bookList.isEmpty()) {
+            throw new ObjectNotFoundException("No books found for category with ID: " + categoryId);
+        }
+
+        return bookList.stream()
+                .map(BookWithAllDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Optional<BookWithAllDTO> getBookById(Long id) {
         return bookRepo.findById(id)
                 .map(BookWithAllDTO::new)
