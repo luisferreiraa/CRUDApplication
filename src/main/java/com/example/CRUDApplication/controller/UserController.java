@@ -58,17 +58,17 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("{userId}/books/{bookId}")
-    public ResponseEntity<UserWithBooksDTO> addBorrowedBookToUser(@PathVariable Long userId, @PathVariable Long bookId) {
-        UserWithBooksDTO updatedUser = userService.addBorrowedBookToUser(userId, bookId);
-        return ResponseEntity.ok(updatedUser);
-    }
-
-    @DeleteMapping("{userId}/books/{bookId}")
-    public ResponseEntity<UserWithBooksDTO> removeBorrowedBookFromUser(@PathVariable Long userId, @PathVariable Long bookId) {
-        UserWithBooksDTO updatedUser = userService.removeBorrowedBookFromUser(userId, bookId);
-        return ResponseEntity.ok(updatedUser);
-    }
+//    @PutMapping("{userId}/books/{bookId}")
+//    public ResponseEntity<UserWithBooksDTO> addBorrowedBookToUser(@PathVariable Long userId, @PathVariable Long bookId) {
+//        UserWithBooksDTO updatedUser = userService.addBorrowedBookToUser(userId, bookId);
+//        return ResponseEntity.ok(updatedUser);
+//    }
+//
+//    @DeleteMapping("{userId}/books/{bookId}")
+//    public ResponseEntity<UserWithBooksDTO> removeBorrowedBookFromUser(@PathVariable Long userId, @PathVariable Long bookId) {
+//        UserWithBooksDTO updatedUser = userService.removeBorrowedBookFromUser(userId, bookId);
+//        return ResponseEntity.ok(updatedUser);
+//    }
 
 
 }

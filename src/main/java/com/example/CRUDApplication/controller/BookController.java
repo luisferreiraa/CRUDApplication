@@ -52,11 +52,11 @@ public class BookController {
         return ResponseEntity.ok(books);
     }
 
-    @GetMapping("/by-publisher/{publisherId}")
-    public ResponseEntity<List<BookWithAllDTO>> getBooksByPublisherId(@PathVariable Long publisherId) {
-        List<BookWithAllDTO> books = bookService.getBooksByPublisherId(publisherId);
-        return ResponseEntity.ok(books);
-    }
+//    @GetMapping("/by-publisher/{publisherId}")
+//    public ResponseEntity<List<BookWithAllDTO>> getBooksByPublisherId(@PathVariable Long publisherId) {
+//        List<BookWithAllDTO> books = bookService.getBooksByPublisherId(publisherId);
+//        return ResponseEntity.ok(books);
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<BookWithAllDTO>> getBookById(@PathVariable Long id) {

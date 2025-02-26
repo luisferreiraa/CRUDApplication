@@ -8,13 +8,13 @@ import java.util.stream.Collectors;
 public class UserWithBooksDTO {
     private Long id;
     private String username;
-    private List<BookWithAllDTO> borrowedBooks;
+    private List<BorrowedBookDTO> borrowedBooks;
 
     public UserWithBooksDTO(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.borrowedBooks = user.getBorrowedBooks().stream()
-                .map(BookWithAllDTO::new)
+                .map(borrowedBook -> new BorrowedBookDTO(borrowedBook.getUser().getId(), borrowedBook.getBook().getId(), borrowedBook.getBorrowDate()))
                 .collect(Collectors.toList());
     }
 
@@ -37,11 +37,11 @@ public class UserWithBooksDTO {
         this.username = username;
     }
 
-    public List<BookWithAllDTO> getBorrowedBooks() {
+    public List<BorrowedBookDTO> getBorrowedBooks() {
         return borrowedBooks;
     }
 
-    public void setBorrowedBooks(List<BookWithAllDTO> borrowedBooks) {
+    public void setBorrowedBooks(List<BorrowedBookDTO> borrowedBooks) {
         this.borrowedBooks = borrowedBooks;
     }
 }

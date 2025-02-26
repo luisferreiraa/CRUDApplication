@@ -13,7 +13,7 @@ public class BookWithAllDTO {
     private List<ReviewDTO> reviews;
     private List<AuthorDTO> authors;
     private Integer copies;
-    private List<UserDTO> borrowedBy;
+    private List<BorrowedBookDTO> borrowedBy;
 
     // Construtor que transforma um Book em BookWithAllDTO
     public BookWithAllDTO(Book book) {
@@ -36,8 +36,9 @@ public class BookWithAllDTO {
 
         this.copies = book.getCopies();
 
-        this.borrowedBy = book.getBorrowedBy().stream()
-                .map(UserDTO::new)
+        // Mapeando BorrowedBook para BorrowedBookDTO, para incluir dados adicionais como data de empréstimo
+        this.borrowedBy = book.getBorrowedBooks().stream()
+                .map(borrowedBook -> new BorrowedBookDTO(borrowedBook.getUser().getId(), borrowedBook.getBook().getId(), borrowedBook.getBorrowDate()))
                 .collect(Collectors.toList());
     }
 
@@ -99,11 +100,11 @@ public class BookWithAllDTO {
         this.copies = copies;
     }
 
-    public List<UserDTO> getBorrowedBy() {
+    public List<BorrowedBookDTO> getBorrowedBy() {
         return borrowedBy;
     }
 
-    public void setBorrowedBy(List<UserDTO> borrowedBy) {
+    public void setBorrowedBy(List<BorrowedBookDTO> borrowedBy) {
         this.borrowedBy = borrowedBy;
     }
 }

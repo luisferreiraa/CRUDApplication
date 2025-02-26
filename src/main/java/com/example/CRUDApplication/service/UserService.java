@@ -17,7 +17,7 @@ public interface UserService {
     UserDTO addUser(UserCreateRequestDTO user);
     UserDTO updateUserUsername(Long id, UserUsernameDTO updateData);
     boolean deleteUserById(Long id);
-    UserWithBooksDTO addBorrowedBookToUser(Long userId, Long bookId);
-    UserWithBooksDTO removeBorrowedBookFromUser(Long userId, Long bookId);
+//    UserWithBooksDTO addBorrowedBookToUser(Long userId, Long bookId);
+//    UserWithBooksDTO removeBorrowedBookFromUser(Long userId, Long bookId);
 
 }

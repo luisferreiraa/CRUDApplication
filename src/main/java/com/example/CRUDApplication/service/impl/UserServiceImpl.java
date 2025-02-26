@@ -109,53 +109,53 @@ public class UserServiceImpl implements UserService {
         throw new ObjectNotFoundException("User not found with ID: " + id);
     }
 
-    @Override
-    @Transactional
-    public UserWithBooksDTO addBorrowedBookToUser(Long userId, Long bookId) {
-        User userDB = userRepo.findById(userId)
-                .orElseThrow(() -> new ObjectNotFoundException("User not found with ID: " + userId));
-
-        Book bookDB = bookRepo.findById(bookId)
-                .orElseThrow(() -> new ObjectNotFoundException("Book not found with ID: " + bookId));
-
-        // Verifica se o livro já está na lista
-        if (userDB.getBorrowedBooks().contains(bookDB)) {
-            throw new RecordAlreadyExistsException("Book with ID " + bookId + " is already borrowed by the user with ID: " + userId);
-        }
-
-        // Verifica se ainda existem cópias disponíveis
-        if (bookDB.getAvailableCopies() <= 0) {
-            throw new ResourceNotAvailableException("No copies available for book with ID: " + bookId);
-        }
-
-        // Adiciona o livro à lista de livros emprestados pelo utilizador
-        userDB.getBorrowedBooks().add(bookDB);
-
-        User updatedUser = userRepo.save(userDB);
-
-        return new UserWithBooksDTO(updatedUser);
-    }
-
-    @Override
-    @Transactional
-    public UserWithBooksDTO removeBorrowedBookFromUser(Long userId, Long bookId) {
-        User userDB = userRepo.findById(userId)
-                .orElseThrow(() -> new ObjectNotFoundException("User not found with ID: " + userId));
-
-        Book bookDB = bookRepo.findById(bookId)
-                .orElseThrow(() -> new ObjectNotFoundException("Book not found with ID: " + bookId));
-
-        // Verifica se o livro não está na lista
-        if (!userDB.getBorrowedBooks().contains(bookDB)) {
-            throw new ObjectNotFoundException("Book with ID: " + bookId + " is not borrowed by the user with ID: " + userId);
-        }
-
-        userDB.getBorrowedBooks().remove(bookDB);
-
-        User updatedUser = userRepo.save(userDB);
-
-        return new UserWithBooksDTO(updatedUser);
-    }
+//    @Override
+//    @Transactional
+//    public UserWithBooksDTO addBorrowedBookToUser(Long userId, Long bookId) {
+//        User userDB = userRepo.findById(userId)
+//                .orElseThrow(() -> new ObjectNotFoundException("User not found with ID: " + userId));
+//
+//        Book bookDB = bookRepo.findById(bookId)
+//                .orElseThrow(() -> new ObjectNotFoundException("Book not found with ID: " + bookId));
+//
+//        // Verifica se o livro já está na lista
+//        if (userDB.getBorrowedBooks().contains(bookDB)) {
+//            throw new RecordAlreadyExistsException("Book with ID " + bookId + " is already borrowed by the user with ID: " + userId);
+//        }
+//
+//        // Verifica se ainda existem cópias disponíveis
+//        if (bookDB.getAvailableCopies() <= 0) {
+//            throw new ResourceNotAvailableException("No copies available for book with ID: " + bookId);
+//        }
+//
+//        // Adiciona o livro à lista de livros emprestados pelo utilizador
+//        userDB.getBorrowedBooks().add(bookDB);
+//
+//        User updatedUser = userRepo.save(userDB);
+//
+//        return new UserWithBooksDTO(updatedUser);
+//    }
+//
+//    @Override
+//    @Transactional
+//    public UserWithBooksDTO removeBorrowedBookFromUser(Long userId, Long bookId) {
+//        User userDB = userRepo.findById(userId)
+//                .orElseThrow(() -> new ObjectNotFoundException("User not found with ID: " + userId));
+//
+//        Book bookDB = bookRepo.findById(bookId)
+//                .orElseThrow(() -> new ObjectNotFoundException("Book not found with ID: " + bookId));
+//
+//        // Verifica se o livro não está na lista
+//        if (!userDB.getBorrowedBooks().contains(bookDB)) {
+//            throw new ObjectNotFoundException("Book with ID: " + bookId + " is not borrowed by the user with ID: " + userId);
+//        }
+//
+//        userDB.getBorrowedBooks().remove(bookDB);
+//
+//        User updatedUser = userRepo.save(userDB);
+//
+//        return new UserWithBooksDTO(updatedUser);
+//    }
 
 
 }

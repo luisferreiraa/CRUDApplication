@@ -16,5 +16,5 @@ public interface BookRepo extends JpaRepository<Book, Long> {
     // então não precisamos declarar nada manualmente a menos que desejemos consultas personalizadas.
     List<Book> findByAuthorsId(Long id);
     List<Book> findByCategoriesId(Long id);
-    List<Book> findByPublishersId(Long id);
+//    List<Book> findByPublishersId(Long id);
 }

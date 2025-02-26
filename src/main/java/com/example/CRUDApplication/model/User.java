@@ -33,14 +33,17 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private UserRole role;
 
-    @ManyToMany
-    @JoinTable(
-            name = "borrowed_books",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "book_id")
-    )
-    @JsonIgnore
-    private List<Book> borrowedBooks;
+//    @ManyToMany
+//    @JoinTable(
+//            name = "borrowed_books",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "book_id")
+//    )
+//    @JsonIgnore
+//    private List<Book> borrowedBooks;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<BorrowedBook> borrowedBooks;
 
     // Getters e Setters
 
@@ -102,11 +105,19 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    public List<Book> getBorrowedBooks() {
+    public List<BorrowedBook> getBorrowedBooks() {
         return borrowedBooks;
     }
 
-    public void setBorrowedBooks(List<Book> borrowedBooks) {
+    public void setBorrowedBooks(List<BorrowedBook> borrowedBooks) {
         this.borrowedBooks = borrowedBooks;
     }
+
+    //    public List<Book> getBorrowedBooks() {
+//        return borrowedBooks;
+//    }
+//
+//    public void setBorrowedBooks(List<Book> borrowedBooks) {
+//        this.borrowedBooks = borrowedBooks;
+//    }
 }

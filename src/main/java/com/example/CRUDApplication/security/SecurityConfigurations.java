@@ -27,12 +27,13 @@ public class SecurityConfigurations {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/users/").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users/").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/books/", "/api/authors/", "/api/categories/", "/api/publishers/").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/users/", "/api/books/", "/api/authors/", "/api/categories/", "/api/publishers/").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/books/", "/api/authors/", "/api/categories/", "/api/publishers/").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/users/", "/api/books/", "/api/authors/", "/api/categories/", "/api/publishers/").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/", "/api/books/", "/api/authors/", "/api/categories/", "/api/publishers/").hasRole("ADMIN")
-                        .anyRequest().authenticated()
+//                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

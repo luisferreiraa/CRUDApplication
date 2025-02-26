@@ -56,15 +56,18 @@ public class Book {
     @Column
     private Integer copies;     // Total de cópias disponíveis no sistema
 
-    @ManyToMany(mappedBy = "borrowedBooks")
-    @JsonBackReference
-    private List<User> borrowedBy;
+//    @ManyToMany(mappedBy = "borrowedBooks")
+//    @JsonBackReference
+//    private List<User> borrowedBy;
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private List<BorrowedBook> borrowedBooks;
 
     // Campo calculado (não será guardado na base de dados)
     @Transient
     @JsonIgnore     // Evita serialização infinita
     public Integer getAvailableCopies() {
-        return copies - (borrowedBy != null ? borrowedBy.size() : 0);
+        return copies - (borrowedBooks != null ? borrowedBooks.size() : 0);
     }
 
     // Métodos getter e setter explicitamente declarados (opcional, pois o Lombok já os gera)
@@ -124,12 +127,21 @@ public class Book {
         this.categories = categories;
     }
 
-    public List<User> getBorrowedBy() {
-        return borrowedBy;
+//    public List<User> getBorrowedBy() {
+//        return borrowedBy;
+//    }
+//
+//    public void setBorrowedBy(List<User> borrowedBy) {
+//        this.borrowedBy = borrowedBy;
+//    }
+
+
+    public List<BorrowedBook> getBorrowedBooks() {
+        return borrowedBooks;
     }
 
-    public void setBorrowedBy(List<User> borrowedBy) {
-        this.borrowedBy = borrowedBy;
+    public void setBorrowedBooks(List<BorrowedBook> borrowedBooks) {
+        this.borrowedBooks = borrowedBooks;
     }
 }
 
