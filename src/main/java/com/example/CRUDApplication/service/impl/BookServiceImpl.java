@@ -75,16 +75,6 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Page<BookDTO> getBooksByAuthorId(Long id, Pageable pageable) {
-        Page<Book> authorBooks = bookRepo.findByAuthorId(id, pageable);
-
-        if(authorBooks.isEmpty()) {
-            throw new ObjectNotFoundException("No books found for author with ID: " + id);
-        }
-        return authorBooks.map(BookDTO::new);
-    }
-
-    @Override
     public Optional<BookWithAllDTO> getBookById(Long id) {
         return bookRepo.findById(id)
                 .map(BookWithAllDTO::new)

@@ -13,7 +13,6 @@ import java.util.Optional;
 
 public interface BookService {
     Page<BookDTO> getAllBooks(Pageable pageable);
-    Page<BookDTO> getBooksByAuthorId(Long id, Pageable pageable);
     Optional<BookWithAllDTO> getBookById(Long id);
     BookDTO addBook(BookTitleDTO book);
     BookDTO updateBookTitle(Long id, BookTitleDTO updateBook);

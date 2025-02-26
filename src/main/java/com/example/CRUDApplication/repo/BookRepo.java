@@ -11,5 +11,4 @@ import org.springframework.stereotype.Repository;
 public interface BookRepo extends JpaRepository<Book, Long> {
     // JpaRepository já fornece métodos CRUD básicos,
     // então não precisamos declarar nada manualmente a menos que desejemos consultas personalizadas.
-    Page<Book> findByAuthorId(Long id, Pageable pageable);
 }

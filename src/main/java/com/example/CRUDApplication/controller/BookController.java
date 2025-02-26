@@ -40,12 +40,6 @@ public class BookController {
         return ResponseEntity.ok(bookList);
     }
 
-    @GetMapping("/{authorId}/author")
-    public ResponseEntity<Page<BookDTO>> getBooksByAuhor(@PathVariable Long id, Pageable pageable) {
-        Page<BookDTO> authorBooks = bookService.getBooksByAuthorId(id, pageable);
-        return ResponseEntity.ok(authorBooks);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<Optional<BookWithAllDTO>> getBookById(@PathVariable Long id) {
         Optional<BookWithAllDTO> book = bookService.getBookById(id);
