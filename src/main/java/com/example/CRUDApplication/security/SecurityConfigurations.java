@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -26,13 +27,14 @@ public class SecurityConfigurations {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Permite preflight requests (CORS)
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users/").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users/").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/books/", "/api/authors/", "/api/categories/", "/api/publishers/").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/books/", "/api/authors/", "/api/categories/", "/api/publishers/").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/users/", "/api/books/", "/api/authors/", "/api/categories/", "/api/publishers/").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/users/", "/api/books/", "/api/authors/", "/api/categories/", "/api/publishers/").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/books/**", "/api/authors/**", "/api/categories/**", "/api/publishers/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/books/**", "/api/authors/**", "/api/categories/**", "/api/publishers/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/users/**", "/api/books/**", "/api/authors/**", "/api/categories/**", "/api/publishers/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/**", "/api/books/**", "/api/authors/**", "/api/categories/**", "/api/publishers/**").hasRole("ADMIN")
 //                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
