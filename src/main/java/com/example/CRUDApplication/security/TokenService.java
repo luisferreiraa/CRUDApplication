@@ -36,15 +36,21 @@ public class TokenService {
     public String validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            return JWT.require(algorithm)
+            var verifier = JWT.require(algorithm)
                     .withIssuer("CRUDApplication")
-                    .build()
-                    .verify(token)
-                    .getClaim("role").asString();
-//                    .getSubject();
+                    .build();
+
+            var decodedJWT = verifier.verify(token);
+
+            // Recupera o username e o role do JWT
+            String username = decodedJWT.getSubject(); // Esse é o username
+            String role = decodedJWT.getClaim("role").asString(); // Esse é o role
+
+            // Agora, você pode retornar tanto o username quanto o role
+            return username;
 
         } catch(JWTVerificationException exception) {
-            return "";
+            return null; // Retorne null se o token não for válido
         }
     }
 
