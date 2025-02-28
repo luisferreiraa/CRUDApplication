@@ -24,6 +24,7 @@ public class TokenService {
             String token = JWT.create()
                     .withIssuer("CRUDApplication")
                     .withSubject(user.getUsername())
+                    .withClaim("role", user.getRole().toString())
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
             return token;
@@ -39,7 +40,8 @@ public class TokenService {
                     .withIssuer("CRUDApplication")
                     .build()
                     .verify(token)
-                    .getSubject();
+                    .getClaim("role").asString();
+//                    .getSubject();
 
         } catch(JWTVerificationException exception) {
             return "";

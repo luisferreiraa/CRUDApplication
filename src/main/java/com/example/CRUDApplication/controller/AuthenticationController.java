@@ -4,12 +4,15 @@ import com.example.CRUDApplication.dto.LoginRequest;
 import com.example.CRUDApplication.dto.LoginResponseDTO;
 import com.example.CRUDApplication.model.User;
 import com.example.CRUDApplication.security.TokenService;
+import com.example.CRUDApplication.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -19,6 +22,8 @@ public class AuthenticationController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid LoginRequest data) {
@@ -30,5 +35,4 @@ public class AuthenticationController {
         return ResponseEntity.ok(new LoginResponseDTO(token));
 
     }
-
 }
