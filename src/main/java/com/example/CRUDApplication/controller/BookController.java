@@ -1,9 +1,6 @@
 package com.example.CRUDApplication.controller;
 
-import com.example.CRUDApplication.dto.BookDTO;
-import com.example.CRUDApplication.dto.BookWithAllDTO;
-import com.example.CRUDApplication.dto.BookTitleDTO;
-import com.example.CRUDApplication.dto.ReviewDTO;
+import com.example.CRUDApplication.dto.*;
 import com.example.CRUDApplication.model.Book;
 
 import com.example.CRUDApplication.repo.BookRepo;
@@ -65,9 +62,9 @@ public class BookController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<BookDTO> addBook(@Valid @RequestBody BookTitleDTO book) {
-        BookDTO savedBook = bookService.addBook(book);
-        return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
+    public ResponseEntity<Book> addBook(@Valid @RequestBody BookCreateRequestDTO book) {
+        Book savedbook = bookService.addBook(book);
+        return new ResponseEntity<>(savedbook, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")

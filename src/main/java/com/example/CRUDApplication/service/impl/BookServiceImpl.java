@@ -1,9 +1,6 @@
 package com.example.CRUDApplication.service.impl;
 
-import com.example.CRUDApplication.dto.BookDTO;
-import com.example.CRUDApplication.dto.BookWithAllDTO;
-import com.example.CRUDApplication.dto.BookTitleDTO;
-import com.example.CRUDApplication.dto.ReviewDTO;
+import com.example.CRUDApplication.dto.*;
 import com.example.CRUDApplication.exception.ObjectNotFoundException;
 import com.example.CRUDApplication.exception.RequestDataMissingException;
 import com.example.CRUDApplication.model.*;
@@ -123,17 +120,25 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDTO addBook(BookTitleDTO newBook) {
+    public Book addBook(BookCreateRequestDTO newBook) {
 
-        // Cria uma nova entidade a partir do DTO recebido
         Book book = new Book();
         book.setTitle(newBook.getTitle());
 
-        // Salva o livro na base de dados
-        Book savedBook = bookRepo.save(book);
+        // Buscar e associar autores
+        List<Author> authors = authorRepo.findAllById(newBook.getAuthorsId());
+        book.setAuthors(authors);
 
-        // Converte a entidade persistida para DTO antes de retornar
-        return new BookDTO(savedBook);
+        // Buscar e associar editora
+        Publisher publisher = publisherRepo.findById(newBook.getPublisherId())
+                .orElseThrow(() -> new ObjectNotFoundException("Publisher not found"));
+        book.setPublisher(publisher);
+
+        // Buscar e associar as Categorias
+        List<Category> categories = categoryRepo.findAllById(newBook.getCategoriesId());
+        book.setCategories(categories);
+
+        return bookRepo.save(book);
     }
 
     @Override
