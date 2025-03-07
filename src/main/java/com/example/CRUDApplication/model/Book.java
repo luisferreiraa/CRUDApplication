@@ -56,10 +56,6 @@ public class Book {
     @Column
     private Integer copies;     // Total de cópias disponíveis no sistema
 
-//    @ManyToMany(mappedBy = "borrowedBooks")
-//    @JsonBackReference
-//    private List<User> borrowedBy;
-
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     private List<BorrowedBook> borrowedBooks;
 

@@ -2,6 +2,7 @@ package com.example.CRUDApplication.model;
 
 import com.example.CRUDApplication.dto.ReviewDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,9 +19,6 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @Column(nullable = false)
-//    private String reviewerName;
-
     @Column(nullable = false)
     private String comment;
 
@@ -29,7 +27,7 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = false)
-    @JsonBackReference      // Evita o loop infinito na serialização
+    @JsonIgnore
     private Book book;
 
     @ManyToOne
@@ -45,16 +43,6 @@ public class Review {
     public void setId(Long id) {
         this.id = id;
     }
-
-//    public String getReviewerName() {
-//        return reviewerName;
-//    }
-//
-//    public void setReviewerName(String reviewerName) {
-//        this.reviewerName = reviewerName;
-//    }
-
-
     public User getUser() {
         return user;
     }

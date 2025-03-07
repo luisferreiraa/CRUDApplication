@@ -4,52 +4,34 @@ import com.example.CRUDApplication.model.Review;
 
 public class ReviewDTO {
     private Long id;
-//    private String reviewerName;
     private String comment;
     private Integer rating;
-    private BookWithAllDTO book;
-    private UserWithBooksDTO user;
+    private Long bookId;
+    private Long userId;
+    private String username;
 
     // Construtor vazio necessário para serialização
     public ReviewDTO() {
-
     }
 
     public ReviewDTO(Review review) {
         if (review != null) {
             this.id = review.getId();
-//            this.reviewerName = review.getReviewerName();
             this.comment = review.getComment();
             this.rating = review.getRating();
-            this.book = (review.getBook() != null) ? new BookWithAllDTO(review.getBook()) : null;
-            this.user = (review.getUser() != null) ? new UserWithBooksDTO(review.getUser()) : null;
+            this.bookId = (review.getBook() != null) ? review.getBook().getId() : null;
+            this.userId = (review.getUser() != null) ? review.getUser().getId() : null;
+            this.username = (review.getUser() != null) ? review.getUser().getUsername() : null;
         }
     }
 
     // Getters e Setters
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-//    public String getReviewerName() {
-//        return reviewerName;
-//    }
-//
-//    public void setReviewerName(String reviewerName) {
-//        this.reviewerName = reviewerName;
-//    }
-
-    public UserWithBooksDTO getUser() {
-        return user;
-    }
-
-    public void setUser(UserWithBooksDTO user) {
-        this.user = user;
     }
 
     public String getComment() {
@@ -68,11 +50,27 @@ public class ReviewDTO {
         this.rating = rating;
     }
 
-    public BookWithAllDTO getBook() {
-        return book;
+    public Long getBookId() {
+        return bookId;
     }
 
-    public void setBook(BookWithAllDTO book) {
-        this.book = book;
+    public void setBookId(Long bookId) {
+        this.bookId = bookId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
